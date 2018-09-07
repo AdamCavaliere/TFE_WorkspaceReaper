@@ -81,6 +81,7 @@ def findReapableWorkspaces():
                 if datetime.now() > destroyTime:
                     print("Lets Do this")
                     runDetails = destroyWorkspace(workspaceID)
+    return {"Success"}
                     
 
             
