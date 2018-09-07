@@ -1,4 +1,4 @@
-variable "PTFE_TOKEN" {
+variable "TFE_TOKEN" {
   description = "Token needed for checking workspaces"
 }
 
