@@ -145,4 +145,8 @@ def processQueue(json_input, context):
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
+        response = client.delete_message(
+            QueueUrl=queue_url,
+            ReceiptHandle=message['receiptHandle']
+        )
     return {'status':'Successfully Processed'}
