@@ -84,11 +84,12 @@ EOF
 }
 
 resource "aws_lambda_function" "reaper_lambda" {
-  filename      = "../functions/reaper.zip"
-  function_name = "FindWorkspacesToReap"
-  role          = "${aws_iam_role.iam_for_lambda.arn}"
-  handler       = "reapWorkspaces.findReapableWorkspaces"
-  runtime       = "python3.6"
+  filename         = "../functions/reaper.zip"
+  function_name    = "FindWorkspacesToReap"
+  role             = "${aws_iam_role.iam_for_lambda.arn}"
+  handler          = "reapWorkspaces.findReapableWorkspaces"
+  source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
+  runtime          = "python3.6"
 
   environment {
     variables = {
@@ -101,11 +102,12 @@ resource "aws_lambda_function" "reaper_lambda" {
 }
 
 resource "aws_lambda_function" "process_lambda" {
-  filename      = "../functions/reaper.zip"
-  function_name = "ProcessReaperQueue"
-  role          = "${aws_iam_role.sqs_for_lambda.arn}"
-  handler       = "reapWorkspaces.processQueue"
-  runtime       = "python3.6"
+  filename         = "../functions/reaper.zip"
+  function_name    = "ProcessReaperQueue"
+  role             = "${aws_iam_role.sqs_for_lambda.arn}"
+  handler          = "reapWorkspaces.processQueue"
+  source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
+  runtime          = "python3.6"
 
   environment {
     variables = {
