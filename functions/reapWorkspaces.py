@@ -74,7 +74,13 @@ def sendMessage(payload,attributes,delay):
     DelaySeconds=delay,
     MessageAttributes=attributes
     )
-
+def sendMessage2(payload,attributes,delay):
+    response = sqs.send_message(
+    MessageBody=json.dumps(payload),
+    QueueUrl="https://sqs.us-east-2.amazonaws.com/753646501470/temp",
+    DelaySeconds=delay,
+    MessageAttributes=attributes
+    )
 
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
@@ -103,7 +109,12 @@ def findReapableWorkspaces(json_input, context):
                     delay = 30
                     sendMessage(payload,attributes,delay)
     return {"status":"Success"}
-
+attributes2 = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'finalizing'
+                        }
+                }
 def processQueue(json_input, context):
     response = sqs.receive_message(
         QueueUrl=queue_url,
@@ -120,6 +131,7 @@ def processQueue(json_input, context):
     except:
         return {'status':'No Messages'}
     for message in Messages:
+        sendMessage2(attributes2,message,5)
         body = json.loads(message['Body'])
         workspaceID = body['workspaceID']
         runID = body['runID']
