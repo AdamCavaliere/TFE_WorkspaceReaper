@@ -29,7 +29,9 @@ resource "aws_iam_role" "sqs_for_lambda" {
 {
     "Version": "2012-10-17",
     "Statement": [
-        {
+        {      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
             "Effect": "Allow",
             "Action": "sqs:*"
         }
