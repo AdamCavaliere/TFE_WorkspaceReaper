@@ -31,13 +31,7 @@ resource "aws_iam_role" "sqs_for_lambda" {
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "sqs:ListQueues",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "sqs:*",
-            "Resource": "arn:aws:sqs:*:*:*"
+            "Action": "sqs:*"
         }
     ]
 }
