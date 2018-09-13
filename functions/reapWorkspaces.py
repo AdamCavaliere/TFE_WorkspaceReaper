@@ -76,33 +76,14 @@ def applyRun(runID):
     response = requests.post(applyURL, headers=headers)
     
 
-def sendMessage(payload,attributes,delay,receipt_handle="none"):
+def sendMessage(payload,attributes,delay):
     response = sqs.send_message(
     MessageBody=json.dumps(payload),
     QueueUrl=queue_url,
     DelaySeconds=delay,
     MessageAttributes=attributes
     )
-    if receipt_handle != "none":
-        response = client.delete_message(
-        QueueUrl=queue_url,
-        ReceiptHandle=receipt_handle
-        )
-    print(response)
 
-def sendMessage2(payload,attributes,delay,receipt_handle="none"):
-    response = sqs.send_message(
-    MessageBody=json.dumps(payload),
-    QueueUrl="https://sqs.us-east-2.amazonaws.com/753646501470/temp",
-    DelaySeconds=delay,
-    MessageAttributes=attributes
-    )   
-    if receipt_handle != "none":
-        response = client.delete_message(
-        QueueUrl=queue_url,
-        ReceiptHandle=receipt_handle
-        )
-    print(response)
 
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
@@ -137,19 +118,11 @@ attributes2 = {
                     'StringValue': 'finalizing'
                         }
                 }
-def processQueue(json_input="none", context="none"):
-    response = sqs.receive_message(
-        QueueUrl=queue_url,
-        AttributeNames=[
-            'All'
-        ],
-        MaxNumberOfMessages=5,
-        VisibilityTimeout=10
-    )
+def processQueue(json_input, context):
     try:
-        Messages = response['Messages']
+        Messages = json_input['Records']
     except:
-        return {'status':'No Messages'}
+        return {'status':'Failed'}
     for message in Messages:
         body = json.loads(message['Body'])
         workspaceID = body['workspaceID']
@@ -162,6 +135,44 @@ def processQueue(json_input="none", context="none"):
         payload = {
                     'workspaceID':workspaceID,'status':lastStatus,'runID':runID
                 }
-        sendMessage2(payload,attributes2,5,receipt_handle)
-
+        sendMessage(payload,attributes,15)
+        if lastStatus == 'planning' or lastStatus == 'planned':
+            if status == 'planning':
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'continuing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 90
+            elif status == 'planned':
+                applyRun(runID)
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'finalizing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 90
+                sendMessage(payload,attributes,delay)
+            else:
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'finalizing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 5
+                sendMessage(payload,attributes,delay)
+        elif lastStatus == "applied" or lastStatus == "discarded":
+            print("Done")
     return {'status':'Successfully Processed'}    
