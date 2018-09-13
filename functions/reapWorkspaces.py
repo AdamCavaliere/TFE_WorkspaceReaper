@@ -118,43 +118,44 @@ def processQueue(json_input, context):
         WaitTimeSeconds=0
     )
     for message in response['Messages']:
-        workspaceID = message['Body']['workspaceID']
-        runID = message['Body']['runID']
-        lastStatus = message['Body']['status']
+        body = json.loads(message['Body'])
+        workspaceID = body['workspaceID']
+        runID = body['runID']
+        lastStatus = body['status']
         receipt_handle = message['ReceiptHandle']
-        if lastStatus == 'planning'
+        if lastStatus == 'planning':
             runPayload = runStatus(workspaceID,runID)
             status = runPayload['attributes']['status']
             print(status)
-                if status == 'planning':
-                    attributes = {
-                        'run': {
-                        'DataType': 'String',
-                        'StringValue': 'continuing'
-                         }
-                    }
-                    payload = {
-                        'workspaceID':workspaceID,'status':"planning",'runID':runID
-                    }
-                    delay = 90
-                    sendMessage(payload,attributes,delay)
-                    sqs.delete_message(
-                        QueueUrl=queue_url,
-                        ReceiptHandle=receipt_handle
-                    )
-                elif status == 'planned':
-                    applyRun(runID)
-                    attributes = {
-                        'run': {
-                        'DataType': 'String',
-                        'StringValue': 'finalizing'
-                         }
-                    }
-                    payload = {
-                        'workspaceID':workspaceID,'status':"running",'runID':runID
-                    }
-                    delay = 90
-                    sendMessage(payload,attributes,delay)
+            if status == 'planning':
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'continuing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':"planning",'runID':runID
+                }
+                delay = 90
+                sendMessage(payload,attributes,delay)
+                sqs.delete_message(
+                    QueueUrl=queue_url,
+                    ReceiptHandle=receipt_handle
+                )
+            elif status == 'planned':
+                applyRun(runID)
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'finalizing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 90
+                sendMessage(payload,attributes,delay)
     #         keepRunning = True
     #         runPayload = runStatus(workspaceID,runID)
     #         status = runPayload['attributes']['status']
