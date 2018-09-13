@@ -123,10 +123,9 @@ def processQueue(json_input, context):
         runID = body['runID']
         lastStatus = body['status']
         receipt_handle = message['ReceiptHandle']
-        if lastStatus == 'planning':
-            runPayload = runStatus(workspaceID,runID)
-            status = runPayload['attributes']['status']
-            print(status)
+        runPayload = runStatus(workspaceID,runID)
+        status = runPayload['attributes']['status']
+        if lastStatus == 'planning' or lastStatus == 'planned':
             if status == 'planning':
                 attributes = {
                     'run': {
@@ -156,6 +155,10 @@ def processQueue(json_input, context):
                 }
                 delay = 90
                 sendMessage(payload,attributes,delay)
+                sqs.delete_message(
+                    QueueUrl=queue_url,
+                    ReceiptHandle=receipt_handle
+                )
             else:
                 attributes = {
                     'run': {
@@ -168,6 +171,15 @@ def processQueue(json_input, context):
                 }
                 delay = 5
                 sendMessage(payload,attributes,delay)
+                sqs.delete_message(
+                    QueueUrl=queue_url,
+                    ReceiptHandle=receipt_handle
+                )
+        elif lastStatus == "applied" or lastStatus == "discarded":
+            sqs.delete_message(
+                    QueueUrl=queue_url,
+                    ReceiptHandle=receipt_handle
+            )    
     #         keepRunning = True
     #         runPayload = runStatus(workspaceID,runID)
     #         status = runPayload['attributes']['status']
