@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 import time
 import boto3
+import logging
 
 #Configure SQS Object
 sqs = boto3.client('sqs')
@@ -136,7 +137,7 @@ def processQueue(json_input, context):
         AttributeNames=[
             'All'
         ],
-        MaxNumberOfMessages=1,
+        MaxNumberOfMessages=5,
         MessageAttributeNames=[
             'All'
         ],
@@ -167,7 +168,7 @@ def processQueue(json_input, context):
                         }
                 }
                 payload = {
-                    'workspaceID':workspaceID,'status':"planning",'runID':runID
+                    'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
                 sendMessage(payload,attributes,delay,receipt_handle)
