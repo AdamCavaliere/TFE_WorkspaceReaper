@@ -78,7 +78,7 @@ def applyRun(runID):
 
 def sendMessage(payload,attributes,delay):
     response = sqs.send_message(
-    MessageBody=json.dumps(payload),
+    MessageBody=payload,
     QueueUrl=queue_url,
     DelaySeconds=delay,
     MessageAttributes=attributes
@@ -124,7 +124,7 @@ def processQueue(json_input, context):
     except:
         return {'status':'Failed'}
     for message in Messages:
-        body = json.loads(message['Body'])
+        body = message['Body']
         workspaceID = body['workspaceID']
         runID = body['runID']
         lastStatus = body['status']
