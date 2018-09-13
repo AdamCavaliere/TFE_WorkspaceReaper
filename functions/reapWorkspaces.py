@@ -122,7 +122,7 @@ def findReapableWorkspaces(json_input, context):
                     payload = {
                         'workspaceID':workspaceID,'status':"planning",'runID':runID
                     }
-                    delay = 30
+                    delay = 5
                     sendMessage(payload,attributes,delay)
     return {"status":"Success"}
 attributes2 = {
@@ -131,7 +131,7 @@ attributes2 = {
                     'StringValue': 'finalizing'
                         }
                 }
-def processQueue(json_input, context):
+def processQueue(json_input="none", context="none"):
     response = sqs.receive_message(
         QueueUrl=queue_url,
         AttributeNames=[
@@ -155,6 +155,7 @@ def processQueue(json_input, context):
         receipt_handle = message['ReceiptHandle']
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
+        print("Current Status: " + status)
         payload = {
                     'workspaceID':workspaceID,'status':lastStatus,'runID':runID
                 }
