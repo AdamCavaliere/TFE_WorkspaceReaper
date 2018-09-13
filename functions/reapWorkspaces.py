@@ -156,6 +156,18 @@ def processQueue(json_input, context):
                 }
                 delay = 90
                 sendMessage(payload,attributes,delay)
+            else:
+                attributes = {
+                    'run': {
+                    'DataType': 'String',
+                    'StringValue': 'finalizing'
+                        }
+                }
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 5
+                sendMessage(payload,attributes,delay)
     #         keepRunning = True
     #         runPayload = runStatus(workspaceID,runID)
     #         status = runPayload['attributes']['status']
