@@ -27,16 +27,37 @@ resource "aws_iam_role" "sqs_for_lambda" {
 
   assume_role_policy = <<EOF
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "sqs:*"
-            ],
-            "Effect": "Allow",
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "read_write_policy" {
+  name = "test_policy"
+  role = "${aws_iam_role.sqs_for_lambda.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "sqs:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "${aws_sqs_queue.reaper_queue.arn}"
+    }
+  ]
 }
 EOF
 }
