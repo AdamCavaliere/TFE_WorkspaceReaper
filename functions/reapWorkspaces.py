@@ -90,13 +90,19 @@ def sendMessage(payload,attributes,delay,receipt_handle="none"):
         )
     print(response)
 
-def sendMessage2(payload,attributes,delay):
+def sendMessage2(payload,attributes,delay,receipt_handle="none"):
     response = sqs.send_message(
     MessageBody=json.dumps(payload),
     QueueUrl="https://sqs.us-east-2.amazonaws.com/753646501470/temp",
     DelaySeconds=delay,
     MessageAttributes=attributes
-    )
+    )   
+    if receipt_handle != "none":
+        response = client.delete_message(
+        QueueUrl=queue_url,
+        ReceiptHandle=receipt_handle
+        )
+    print(response)
 
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
@@ -138,9 +144,6 @@ def processQueue(json_input="none", context="none"):
             'All'
         ],
         MaxNumberOfMessages=5,
-        MessageAttributeNames=[
-            'All'
-        ],
         VisibilityTimeout=10
     )
     try:
@@ -159,45 +162,6 @@ def processQueue(json_input="none", context="none"):
         payload = {
                     'workspaceID':workspaceID,'status':lastStatus,'runID':runID
                 }
-        sendMessage2(payload,attributes2,5)
-        if lastStatus == 'planning' or lastStatus == 'planned':
-            if status == 'planning':
-                attributes = {
-                    'run': {
-                    'DataType': 'String',
-                    'StringValue': 'continuing'
-                        }
-                }
-                payload = {
-                    'workspaceID':workspaceID,'status':status,'runID':runID
-                }
-                delay = 90
-                sendMessage(payload,attributes,delay,receipt_handle)
-            elif status == 'planned':
-                applyRun(runID)
-                attributes = {
-                    'run': {
-                    'DataType': 'String',
-                    'StringValue': 'finalizing'
-                        }
-                }
-                payload = {
-                    'workspaceID':workspaceID,'status':status,'runID':runID
-                }
-                delay = 90
-                sendMessage(payload,attributes,delay,receipt_handle)
-            else:
-                attributes = {
-                    'run': {
-                    'DataType': 'String',
-                    'StringValue': 'finalizing'
-                        }
-                }
-                payload = {
-                    'workspaceID':workspaceID,'status':status,'runID':runID
-                }
-                delay = 5
-                sendMessage(payload,attributes,delay,receipt_handle)
-        elif lastStatus == "applied" or lastStatus == "discarded":
-            print("Done")
+        sendMessage2(payload,attributes2,5,receipt_handle)
+
     return {'status':'Successfully Processed'}    
