@@ -120,10 +120,6 @@ def processQueue(json_input, context):
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
         print("Current Status: " + status)
-        payload = {
-                    'workspaceID':workspaceID,'status':lastStatus,'runID':runID
-                }
-        sendMessage(payload,15)
         if lastStatus == 'planning' or lastStatus == 'planned':
             if status == 'planning':
                 payload = {
@@ -145,7 +141,7 @@ def processQueue(json_input, context):
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
-        response = client.delete_message(
+        response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
         )
