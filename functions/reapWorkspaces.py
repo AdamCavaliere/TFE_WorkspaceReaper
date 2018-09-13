@@ -5,13 +5,16 @@ import os
 import json
 from datetime import datetime, timedelta
 import time
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
 
 tfeURL = os.environ["TFE_URL"]
 org = os.environ["TFE_ORG"]
 AtlasToken = os.environ["TFE_TOKEN"]
 headers = {'Authorization': "Bearer " + AtlasToken, 'Content-Type' : 'application/vnd.api+json'}
 getWorkspaces_URL = tfeURL + "/api/v2/organizations/" + org + "/workspaces"
-
+table = dynamodb.Table('WorkspaceReaper-' + org)
 
 
 def findRuns(workspaceID):
@@ -82,8 +85,4 @@ def findReapableWorkspaces():
                     print("Lets Do this")
                     runDetails = destroyWorkspace(workspaceID)
     return {"Success"}
-                    
 
-            
-    
-findReapableWorkspaces()
