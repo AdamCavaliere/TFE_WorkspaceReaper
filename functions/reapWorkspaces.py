@@ -115,7 +115,11 @@ def processQueue(json_input, context):
             'All'
         ]
     )
-    for message in response['Messages']:
+    try:
+        Messages = response['Messages']
+    except:
+        return {'status':'No Messages'}
+    for message in Messages:
         body = json.loads(message['Body'])
         workspaceID = body['workspaceID']
         runID = body['runID']
@@ -166,13 +170,5 @@ def processQueue(json_input, context):
     sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=receipt_handle
-    )    
-    #         keepRunning = True
-    #         runPayload = runStatus(workspaceID,runID)
-    #         status = runPayload['attributes']['status']
-    #         print("Still processing...")
-    #         time.sleep(5)
-    #     else:
-    #         applyRun(runID)
-    #         print("Applying!")
-    #         keepRunning = False
+    )
+    return {'status':'Successfully Processed'}    
