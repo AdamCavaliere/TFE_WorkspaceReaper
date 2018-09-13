@@ -61,7 +61,7 @@ resource "aws_lambda_function" "reaper_lambda" {
   }
 }
 
-resource "aws_lambda_function" "reaper_lambda" {
+resource "aws_lambda_function" "process_lambda" {
   filename      = "../functions/reaper.zip"
   function_name = "ProcessReaperQueue"
   role          = "${aws_iam_role.sqs_for_lambda.arn}"
