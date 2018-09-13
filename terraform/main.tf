@@ -22,6 +22,27 @@ resource "aws_iam_role" "iam_for_lambda" {
 EOF
 }
 
+resource "aws_iam_role_policy" "write_policy" {
+  #need to change this to write only policy
+  name = "sqs_write_policy-${var.TFE_ORG}"
+  role = "${aws_iam_role.iam_for_lambda.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "sqs:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "${aws_sqs_queue.reaper_queue.arn}"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role" "sqs_for_lambda" {
   name = "sqs_for_lambda-${var.TFE_ORG}"
 
