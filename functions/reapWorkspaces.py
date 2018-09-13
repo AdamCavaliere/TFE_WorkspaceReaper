@@ -76,9 +76,9 @@ def applyRun(runID):
     response = requests.post(applyURL, headers=headers)
     
 
-def sendMessage(payload,attributes,delay):
+def sendMessage(payload,delay):
     response = sqs.send_message(
-    MessageBody=payload,
+    MessageBody=json.dumps(payload),
     QueueUrl=queue_url,
     DelaySeconds=delay,
     )
@@ -106,6 +106,7 @@ def findReapableWorkspaces(json_input, context):
                     sendMessage(payload,delay)
     return {"status":"Success"}
 
+
 def processQueue(json_input, context):
     try:
         Messages = json_input['Records']
@@ -116,35 +117,27 @@ def processQueue(json_input, context):
         workspaceID = body['workspaceID']
         runID = body['runID']
         lastStatus = body['status']
-        receipt_handle = message['ReceiptHandle']
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
         print("Current Status: " + status)
         payload = {
                     'workspaceID':workspaceID,'status':lastStatus,'runID':runID
                 }
-        sendMessage(payload,attributes,15)
+        sendMessage(payload,15)
         if lastStatus == 'planning' or lastStatus == 'planned':
             if status == 'planning':
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
-                sendMessage(payload,delay)
             elif status == 'planned':
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
-                sendMessage(payload,delay)
+                sendMessage(payload,attributes,delay)
             else:
-                attributes = {
-                    'run': {
-                    'DataType': 'String',
-                    'StringValue': 'finalizing'
-                        }
-                }
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
@@ -152,7 +145,4 @@ def processQueue(json_input, context):
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
-    return {'status':'Successfully Processed'}    
-
-  	
-
+    return {'status':'Successfully Processed'}
