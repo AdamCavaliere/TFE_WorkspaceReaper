@@ -5,15 +5,20 @@ from datetime import datetime, timedelta
 import time
 import boto3
 
+#Configure SQS Object
 sqs = boto3.client('sqs')
+queue_url = os.environ["SQS_QUEUE"]
+
+#TFE Variables - set in the Terraform Code, which inputs them into the Lambda Function
 tfeURL = os.environ["TFE_URL"]
 org = os.environ["TFE_ORG"]
 AtlasToken = os.environ["TFE_TOKEN"]
+
+#Base TFE headers 
 headers = {'Authorization': "Bearer " + AtlasToken, 'Content-Type' : 'application/vnd.api+json'}
 getWorkspaces_URL = tfeURL + "/api/v2/organizations/" + org + "/workspaces"
-queue_url = os.environ["SQS_QUEUE"]
 
-
+#Looking to find the last good run which was applied, not destroyed
 def findRuns(workspaceID):
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
@@ -29,6 +34,7 @@ def findRuns(workspaceID):
     
     return lastGoodApply
 
+#Get the current run status - requires the workspaceID, and the runID to pull this.
 def runStatus(workspaceID,runID):
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayloads = json.loads((requests.get(runURL, headers=headers)).text)
@@ -36,6 +42,7 @@ def runStatus(workspaceID,runID):
             if runPayload['id'] == runID:
                 return(runPayload)    
 
+#Kicks off the Plan to Destroy a workspace.
 def destroyWorkspace(workspaceID):
     payload = {
                 "data": {
@@ -57,16 +64,17 @@ def destroyWorkspace(workspaceID):
     response = json.loads(requests.post(tfeURL + "/api/v2/runs", headers=headers, data=json.dumps(payload)).text)
     return response
 
+#Not Used at this point
 def getPlanStatus(planID):
     planURL = tfeURL + "/api/v2/plans/" + planID
     response = json.loads(requests.get(planURL, headers=headers).text)
     return response
-
+#Kicks off the Apply - there is no response provided.
 def applyRun(runID):
     applyURL = tfeURL + "/api/v2/runs/" + runID + "/actions/apply"
     response = requests.post(applyURL, headers=headers)
-    print(response.text)
     
+
 def sendMessage(payload,attributes,delay):
     response = sqs.send_message(
     MessageBody=json.dumps(payload),
@@ -131,7 +139,6 @@ def processQueue(json_input, context):
     except:
         return {'status':'No Messages'}
     for message in Messages:
-        sendMessage2(attributes2,message,5)
         body = json.loads(message['Body'])
         workspaceID = body['workspaceID']
         runID = body['runID']
@@ -139,6 +146,10 @@ def processQueue(json_input, context):
         receipt_handle = message['ReceiptHandle']
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
+        payload = {
+                    'workspaceID':workspaceID,'status':lastStatus,'runID':runID
+                }
+        sendMessage2(payload,attributes2,5)
         if lastStatus == 'planning' or lastStatus == 'planned':
             if status == 'planning':
                 attributes = {
@@ -179,8 +190,5 @@ def processQueue(json_input, context):
                 sendMessage(payload,attributes,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
-    sqs.delete_message(
-            QueueUrl=queue_url,
-            ReceiptHandle=receipt_handle
-    )
+
     return {'status':'Successfully Processed'}    
