@@ -90,6 +90,7 @@ resource "aws_lambda_function" "reaper_lambda" {
   handler          = "reapWorkspaces.findReapableWorkspaces"
   source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
   runtime          = "python3.6"
+  timeout          = 90
 
   environment {
     variables = {
@@ -108,6 +109,7 @@ resource "aws_lambda_function" "process_lambda" {
   handler          = "reapWorkspaces.processQueue"
   source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
   runtime          = "python3.6"
+  timeout          = 90
 
   environment {
     variables = {
