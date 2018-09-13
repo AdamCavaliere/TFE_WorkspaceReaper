@@ -132,7 +132,8 @@ def processQueue(json_input, context):
         MaxNumberOfMessages=1,
         MessageAttributeNames=[
             'All'
-        ]
+        ],
+        VisibilityTimeout=10
     )
     try:
         Messages = response['Messages']
