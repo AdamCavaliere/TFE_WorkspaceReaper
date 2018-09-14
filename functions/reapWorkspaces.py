@@ -155,7 +155,7 @@ def processQueue(json_input, context):
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
         else:
-             payload = {
+            payload = {
                 'workspaceID':workspaceID,'status':status,'runID':runID
             }
             delay = 10
