@@ -109,14 +109,14 @@ def findReapableWorkspaces(json_input, context):
                     }
                     delay = 5
                     sendMessage(payload,delay)
-            table.put_item(
-                Item={
-                    'workspaceID' : workspaceID,
-                    'status' : 'beginning',
-                    'lastStatus' : 'first',
-                    'runPayload' : runDetails
-                }
-            )
+                    table.put_item(
+                        Item={
+                            'workspaceID' : workspaceID,
+                            'status' : 'beginning',
+                            'lastStatus' : 'first',
+                            'runPayload' : runDetails
+                        }
+                    )
     return {"status":"Success"}
 
 
