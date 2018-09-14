@@ -6,6 +6,7 @@ import time
 import boto3
 import logging
 
+
 #Configure SQS Object
 sqs = boto3.client('sqs')
 queue_url = os.environ["SQS_QUEUE"]
@@ -14,6 +15,10 @@ queue_url = os.environ["SQS_QUEUE"]
 tfeURL = os.environ["TFE_URL"]
 org = os.environ["TFE_ORG"]
 AtlasToken = os.environ["TFE_TOKEN"]
+
+#Configure DynamoDB
+dyn = boto3.client('dynamodb')
+table = dyn.Table('WorkspaceReaper-' + org)
 
 #Base TFE headers 
 headers = {'Authorization': "Bearer " + AtlasToken, 'Content-Type' : 'application/vnd.api+json'}
@@ -119,6 +124,14 @@ def processQueue(json_input, context):
         lastStatus = body['status']
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
+        table.put_item(
+            Item={
+                'workspaceID' : workspaceID,
+                'status' : status,
+                'lastStatus' : lastStatus,
+                'runPayload' : runPayload
+            }
+        )
         print("Current Status: " + status)
         if lastStatus == 'planning' or lastStatus == 'planned':
             if status == 'planning':
@@ -141,6 +154,12 @@ def processQueue(json_input, context):
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
+        else:
+             payload = {
+                'workspaceID':workspaceID,'status':status,'runID':runID
+            }
+            delay = 10
+            sendMessage(payload,delay)
         response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
