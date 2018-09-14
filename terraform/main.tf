@@ -33,7 +33,7 @@ resource "aws_iam_role_policy" "write_policy" {
   "Statement": [
     {
       "Action": [
-        "sqs:*",
+        "sqs:*"
       ],
       "Effect": "Allow",
       "Resource": "${aws_sqs_queue.reaper_queue.arn}"
