@@ -147,13 +147,14 @@ def processQueue(json_input, context):
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
+                sendMessage(payload,delay)
             elif status == 'planned' or status == 'planned_and_finished':
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
-                sendMessage(payload,attributes,delay)
+                sendMessage(payload,delay)
             else:
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
@@ -161,7 +162,14 @@ def processQueue(json_input, context):
                 delay = 5
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
-            print("Done")
+            table.put_item(
+            Item={
+                'workspaceId' : workspaceID + 'finished',
+                'status' : status,
+                'lastStatus' : lastStatus,
+                'runPayload' : runPayload
+            }
+            )
         else:
             payload = {
                 'workspaceID':workspaceID,'status':status,'runID':runID
@@ -171,13 +179,5 @@ def processQueue(json_input, context):
         response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
-        )
-        table.put_item(
-            Item={
-                'workspaceId' : workspaceID + 'bottom',
-                'status' : status,
-                'lastStatus' : lastStatus,
-                'runPayload' : runPayload
-            }
         )
     return {'status':'Successfully Processed'}
