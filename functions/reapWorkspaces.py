@@ -17,7 +17,7 @@ org = os.environ["TFE_ORG"]
 AtlasToken = os.environ["TFE_TOKEN"]
 
 #Configure DynamoDB
-dyn = boto3.client('dynamoDB')
+dyn = boto3.resource('dynamodb')
 table = dyn.Table('WorkspaceReaper-' + org)
 
 #Base TFE headers 
@@ -109,6 +109,14 @@ def findReapableWorkspaces(json_input, context):
                     }
                     delay = 5
                     sendMessage(payload,delay)
+            table.put_item(
+                Item={
+                    'workspaceID' : workspaceID,
+                    'status' : 'beginning',
+                    'lastStatus' : 'first',
+                    'runPayload' : runDetails
+                }
+            )
     return {"status":"Success"}
 
 
