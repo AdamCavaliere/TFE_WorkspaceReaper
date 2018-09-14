@@ -34,10 +34,16 @@ resource "aws_iam_role_policy" "write_policy" {
     {
       "Action": [
         "sqs:*",
-        "dynamodb:*"
       ],
       "Effect": "Allow",
       "Resource": "${aws_sqs_queue.reaper_queue.arn}"
+    },
+    {
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
     }
   ]
 }
