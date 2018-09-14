@@ -17,7 +17,7 @@ org = os.environ["TFE_ORG"]
 AtlasToken = os.environ["TFE_TOKEN"]
 
 #Configure DynamoDB
-dyn = boto3.client('dynamodb')
+dyn = boto3.client('dynamoDB')
 table = dyn.Table('WorkspaceReaper-' + org)
 
 #Base TFE headers 
