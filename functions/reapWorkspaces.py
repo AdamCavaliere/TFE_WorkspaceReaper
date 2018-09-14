@@ -134,7 +134,7 @@ def processQueue(json_input, context):
         status = runPayload['attributes']['status']
         table.put_item(
             Item={
-                'workspaceID' : workspaceID,
+                'workspaceId' : workspaceID,
                 'status' : status,
                 'lastStatus' : lastStatus,
                 'runPayload' : runPayload
