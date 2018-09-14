@@ -172,4 +172,12 @@ def processQueue(json_input, context):
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
         )
+        table.put_item(
+            Item={
+                'workspaceId' : workspaceID + 'bottom',
+                'status' : status,
+                'lastStatus' : lastStatus,
+                'runPayload' : runPayload
+            }
+        )
     return {'status':'Successfully Processed'}
