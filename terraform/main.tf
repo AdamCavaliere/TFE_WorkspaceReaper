@@ -80,11 +80,17 @@ resource "aws_iam_role_policy" "read_write_policy" {
   "Statement": [
     {
       "Action": [
-        "sqs:*",
-        "dynamodb:*"
+        "sqs:*"
       ],
       "Effect": "Allow",
       "Resource": "${aws_sqs_queue.reaper_queue.arn}"
+    }
+        {
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
     }
   ]
 }
