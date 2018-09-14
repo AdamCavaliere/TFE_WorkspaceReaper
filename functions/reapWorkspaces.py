@@ -152,7 +152,8 @@ def processQueue(json_input, context):
                 }
                 delay = 5
                 sendMessage(payload,delay)
-        elif lastStatus == "applied" or lastStatus == "discarded":
+        elif: 
+            lastStatus == "applied" or lastStatus == "discarded":
             print("Done")
         else:
              payload = {
