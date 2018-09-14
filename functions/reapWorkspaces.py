@@ -167,7 +167,8 @@ def processQueue(json_input, context):
                 'workspaceId' : workspaceID + 'finished',
                 'status' : status,
                 'lastStatus' : lastStatus,
-                'runPayload' : runPayload
+                'runPayload' : runPayload,
+                'planDetails': getPlanStatus(runPayload['relationships']['plan']['data']['id'])
             }
             )
         else:
