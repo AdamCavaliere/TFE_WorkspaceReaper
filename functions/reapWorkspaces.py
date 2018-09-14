@@ -141,13 +141,13 @@ def processQueue(json_input, context):
             }
         )
         print("Current Status: " + status)
-        if lastStatus == 'planning' or lastStatus == 'planned':
+        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished':
             if status == 'planning':
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 90
-            elif status == 'planned':
+            elif status == 'planned' or status == 'planned_and_finished':
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
