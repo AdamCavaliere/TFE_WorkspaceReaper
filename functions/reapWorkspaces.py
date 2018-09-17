@@ -122,7 +122,7 @@ def findReapableWorkspaces(json_input, context):
                             'lastStatus' : 'first',
                             'runPayload' : runDetails,
                             'variablePayload' : variable,
-                            'workspaceName' : grabWorkspaceName(variable)
+                            'workspaceName' : grabWorkspaceName(workspaceURL)
                         }
                     )
     return {"status":"Success"}
