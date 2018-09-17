@@ -141,3 +141,27 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   enabled          = true
   function_name    = "${aws_lambda_function.process_lambda.arn}"
 }
+
+resource "aws_cloudwatch_event_rule" "hourly_runs" {
+  name                = "check_hourly"
+  description         = "Check for workspaces to reap hourly"
+  schedule_expression = "rate(1 hour)"
+}
+
+resource "aws_cloudwatch_event_target" "daily_running_report" {
+  rule      = "${aws_cloudwatch_event_rule.hourly_runs.name}"
+  target_id = "${aws_lambda_function.reaper_lambda.function_name}"
+  arn       = "${aws_lambda_function.reaper_lambda.arn}"
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_instance_usage" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.reaper_lambda.function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.hourly_runs.arn}"
+
+  #depends_on = [
+  #  "aws_lambda_function.notifyInstanceUsage"
+  #]
+}

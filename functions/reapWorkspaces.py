@@ -51,7 +51,8 @@ def runStatus(workspaceID,runID):
 
 def grabWorkspaceName(URL):
     response = json.loads((requests.get(URL,headers=headers)).text)
-    return(response['data']['attributes']['name']
+    print(response)
+    return(response['data']['attributes']['name'])
 
 
 #Kicks off the Plan to Destroy a workspace.
