@@ -210,8 +210,9 @@ def processQueue(json_input, context):
             delay = 10
         #Delete the message as it has been processed
         sendMessage(payload,delay)
-            response = sqs.delete_message(
+        response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
         )
+        print(response)
     return {'status':'Successfully Processed'}
