@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import time
 import boto3
 import logging
+import decimal
+from botocore.exceptions import ClientError
 
 
 #Configure SQS Object
@@ -162,15 +164,31 @@ def processQueue(json_input, context):
                 delay = 5
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
-            table.put_item(
-            Item={
-                'workspaceId' : workspaceID + 'finished',
-                'status' : status,
-                'lastStatus' : lastStatus,
-                'runPayload' : runPayload,
-                'planDetails': getPlanStatus(runPayload['relationships']['plan']['data']['id'])
-            }
-            )
+            planDetails = getPlanStatus(runPayload['relationships']['plan']['data']['id'])
+            planStatus = planDetails['data']['attributes']['status']
+            resourceDestructions = planDetails['data']['attributes']['resource-destructions']
+            if planStatus == "finished":
+                try:
+                    response = table.update_item(
+                        Key={
+                            'workspaceId': 'orgSavings'
+                        },
+                        UpdateExpression="set destructions = destructions + :val",
+                        ExpressionAttributeValues={
+                            ':val': resourceDestructions
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
+                except ClientError as e:
+                    if e.response['Error']['Code'] == "ValidationException":
+                        table.put_item(
+                            Item={
+                                'workspaceId' : 'orgSavings',
+                                'destructions' : resourceDestructions
+                            }
+                        )
+                    else:
+                        raise
         else:
             payload = {
                 'workspaceID':workspaceID,'status':status,'runID':runID
