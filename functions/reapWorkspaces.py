@@ -50,7 +50,7 @@ def runStatus(workspaceID,runID):
                 return(runPayload)    
 
 def grabWorkspaceName(URL):
-    response = json.loads((requests.get(URL,headers=headers)).text)
+    response = json.loads((requests.get(tfeURL + URL,headers=headers)).text)
     print(response)
     return(response['data']['attributes']['name'])
 
