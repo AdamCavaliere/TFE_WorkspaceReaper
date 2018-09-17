@@ -8,7 +8,6 @@ import logging
 import decimal
 from botocore.exceptions import ClientError
 
-
 #Configure SQS Object
 sqs = boto3.client('sqs')
 queue_url = os.environ["SQS_QUEUE"]
@@ -154,14 +153,14 @@ def processQueue(json_input, context):
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
-                delay = 90
+                delay = 30
                 sendMessage(payload,delay)
             elif status == 'planned' or status == 'planned_and_finished':
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
-                delay = 90
+                delay = 15
                 sendMessage(payload,delay)
             else:
                 payload = {
@@ -195,13 +194,23 @@ def processQueue(json_input, context):
                         )
                     else:
                         raise
+        elif lastStatus == "errored":
+            table.put_item(
+                Item={
+                    'workspaceId' : workspaceID,
+                    'status' : 'errored',
+                    'lastStatus' : lastStatus,
+                    'runPayload' : runPayload
+                }
+            )
         else:
             payload = {
                 'workspaceID':workspaceID,'status':status,'runID':runID
             }
             delay = 10
-            sendMessage(payload,delay)
-        response = sqs.delete_message(
+        #Delete the message as it has been processed
+        sendMessage(payload,delay)
+            response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
         )
