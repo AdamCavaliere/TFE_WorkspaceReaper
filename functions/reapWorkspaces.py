@@ -49,6 +49,11 @@ def runStatus(workspaceID,runID):
             if runPayload['id'] == runID:
                 return(runPayload)    
 
+def grabWorkspaceName(URL):
+    response = json.loads((requests.get(URL,headers=headers)).text)
+    return(response['data']['attributes']['name']
+
+
 #Kicks off the Plan to Destroy a workspace.
 def destroyWorkspace(workspaceID):
     payload = {
@@ -116,7 +121,8 @@ def findReapableWorkspaces(json_input, context):
                             'status' : 'beginning',
                             'lastStatus' : 'first',
                             'runPayload' : runDetails,
-                            'variablePayload' : variable
+                            'variablePayload' : variable,
+                            'workspaceName' : grabWorkspaceName(variable)
                         }
                     )
     return {"status":"Success"}
