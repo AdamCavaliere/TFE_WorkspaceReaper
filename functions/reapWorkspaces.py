@@ -37,7 +37,6 @@ def findRuns(workspaceID):
                 break
             else:
                 lastGoodApply = run['attributes']['status-timestamps']['applied-at']
-                print(run)
                 break
     
     return lastGoodApply
@@ -116,7 +115,8 @@ def findReapableWorkspaces(json_input, context):
                             'workspaceId' : workspaceID,
                             'status' : 'beginning',
                             'lastStatus' : 'first',
-                            'runPayload' : runDetails
+                            'runPayload' : runDetails,
+                            'variablePayload' : variable
                         }
                     )
     return {"status":"Success"}
@@ -142,7 +142,6 @@ def processQueue(json_input, context):
                 'runPayload' : runPayload
             }
         )
-        print("Current Status: " + status)
         if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished':
             if status == 'planning':
                 payload = {
