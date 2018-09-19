@@ -72,7 +72,7 @@ EOF
 
 resource "aws_iam_role_policy" "read_write_policy" {
   name = "test_policy"
-  role = "${aws_iam_role.sqs_for_lambda.id}-${var.TFE_ORG}"
+  role = "${aws_iam_role.sqs_for_lambda.id}"
 
   policy = <<EOF
 {
