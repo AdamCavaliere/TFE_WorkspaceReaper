@@ -128,7 +128,7 @@ def findReapableWorkspaces(json_input, context):
                 runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
                 destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
                 if datetime.now() > destroyTime:
-                    wsDetails = grabWorkSpaceDetails(workspaceURL)
+                    wsDetails = grabWorkspaceDetails(workspaceURL)
                     if wsDetails['data']['attributes']['locked'] == False:
                         print("Lets Do this")
                         runDetails = destroyWorkspace(workspaceID)
