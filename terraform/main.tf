@@ -72,7 +72,7 @@ EOF
 
 resource "aws_iam_role_policy" "read_write_policy" {
   name = "test_policy"
-  role = "${aws_iam_role.sqs_for_lambda.id}"
+  role = "${aws_iam_role.sqs_for_lambda.id}-${var.TFE_ORG}"
 
   policy = <<EOF
 {
@@ -99,7 +99,7 @@ EOF
 
 resource "aws_lambda_function" "reaper_lambda" {
   filename         = "../functions/reaper.zip"
-  function_name    = "FindWorkspacesToReap"
+  function_name    = "FindWorkspacesToReap-${var.TFE_ORG}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
   handler          = "reapWorkspaces.findReapableWorkspaces"
   source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
@@ -118,7 +118,7 @@ resource "aws_lambda_function" "reaper_lambda" {
 
 resource "aws_lambda_function" "process_lambda" {
   filename         = "../functions/reaper.zip"
-  function_name    = "ProcessReaperQueue"
+  function_name    = "ProcessReaperQueue-${var.TFE_ORG}"
   role             = "${aws_iam_role.sqs_for_lambda.arn}"
   handler          = "reapWorkspaces.processQueue"
   source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
@@ -160,8 +160,4 @@ resource "aws_lambda_permission" "allow_cloudwatch_instance_usage" {
   function_name = "${aws_lambda_function.reaper_lambda.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.hourly_runs.arn}"
-
-  #depends_on = [
-  #  "aws_lambda_function.notifyInstanceUsage"
-  #]
 }
