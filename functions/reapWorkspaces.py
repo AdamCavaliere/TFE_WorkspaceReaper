@@ -48,10 +48,9 @@ def runStatus(workspaceID,runID):
             if runPayload['id'] == runID:
                 return(runPayload)    
 
-def grabWorkspaceName(URL):
+def grabWorkspaceDetails(URL):
     response = json.loads((requests.get(tfeURL + URL,headers=headers)).text)
-    print(response)
-    return(response['data']['attributes']['name'])
+    return(response)
 
 
 #Kicks off the Plan to Destroy a workspace.
@@ -60,7 +59,7 @@ def destroyWorkspace(workspaceID):
                 "data": {
                     "attributes": {
                     "is-destroy":True,
-                    "message": "Custom message"
+                    "message": "Workspace Destroyed by ReaperBot"
                     },
                     "type":"runs",
                     "relationships": {
@@ -94,6 +93,28 @@ def sendMessage(payload,delay):
     DelaySeconds=delay,
     )
 
+def UpdateItem(workspaceId, expressionAttributes):
+    try:
+        response = table.update_item(
+            Key={
+                'workspaceId': workspaceId
+            },
+            UpdateExpression=expression,
+            ExpressionAttributeValues={
+                expressionAttributes
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == "ValidationException":
+            table.put_item(
+                Item={
+                    'workspaceId' : workspaceId,
+                    'iterations' : 15
+                }
+            )
+        else:
+            raise
 
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
@@ -107,24 +128,26 @@ def findReapableWorkspaces(json_input, context):
                 runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
                 destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
                 if datetime.now() > destroyTime:
-                    print("Lets Do this")
-                    runDetails = destroyWorkspace(workspaceID)
-                    runID = runDetails['data']['id']
-                    payload = {
-                        'workspaceID':workspaceID,'status':"planning",'runID':runID
-                    }
-                    delay = 5
-                    sendMessage(payload,delay)
-                    table.put_item(
-                        Item={
-                            'workspaceId' : workspaceID + "-begin",
-                            'status' : 'beginning',
-                            'lastStatus' : 'first',
-                            'runPayload' : runDetails,
-                            'variablePayload' : variable,
-                            'workspaceName' : grabWorkspaceName(workspaceURL)
+                    wsDetails = grabWorkSpaceDetails(workspaceURL)
+                    if wsDetails['data']['attributes']['locked'] == False:
+                        print("Lets Do this")
+                        runDetails = destroyWorkspace(workspaceID)
+                        runID = runDetails['data']['id']
+                        payload = {
+                            'workspaceID':workspaceID,'status':"planning",'runID':runID
                         }
-                    )
+                        delay = 5
+                        sendMessage(payload,delay)
+                        table.put_item(
+                            Item={
+                                'workspaceId' : workspaceID,
+                                'status' : 'beginning',
+                                'lastStatus' : 'first',
+                                'runPayload' : runDetails,
+                                'variablePayload' : variable,
+                                'workspaceName' : wsDetails['data']['attributes']['name']
+                            }
+                        )
     return {"status":"Success"}
 
 
@@ -203,13 +226,8 @@ def processQueue(json_input, context):
                     'runPayload' : runPayload
                 }
             )
-        else:
-            payload = {
-                'workspaceID':workspaceID,'status':status,'runID':runID
-            }
-            delay = 10
+
         #Delete the message as it has been processed
-        sendMessage(payload,delay)
         response = sqs.delete_message(
             QueueUrl=queue_url,
             ReceiptHandle=message['receiptHandle']
