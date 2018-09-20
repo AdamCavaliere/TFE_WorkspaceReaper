@@ -143,7 +143,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
 }
 
 resource "aws_cloudwatch_event_rule" "hourly_runs" {
-  name                = "check_hourly"
+  name                = "WorkspaceReaper-check_hourly-${var.TFE_ORG}"
   description         = "Check for workspaces to reap hourly"
   schedule_expression = "rate(1 hour)"
 }

@@ -18,7 +18,7 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
 # Application Details
-
+## Application Flow Diagram
 ![Image of Resources](https://www.lucidchart.com/publicSegments/view/d8cd6d6c-9a05-49ed-8bd9-4e3635b74b87/image.png)
 
 ## Resources Utilized
@@ -31,6 +31,8 @@ The application is fully based on Lambda functions, and is automatically deploye
 Two functions are deployed:
  * FindWorkspacesToReap-[orgName]
  * ProcessReaperQueue-[orgName]
+
+ Both functions are in the same Python file (reapWorkspaces.py)
 
 #### FindWorkspacesToReap
 This process loops through the variables in the organization you have specified. It is setup to run every hour, from the time of the deployment of the Lambda function. 
