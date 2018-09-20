@@ -17,14 +17,13 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_ORG` - The organization your workspaces are configured under
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
+![Image of Resources](https://www.lucidchart.com/publicSegments/view/d8cd6d6c-9a05-49ed-8bd9-4e3635b74b87/image.png)
 
 ## Resources Utilized
  * AWS - Lambda
  * AWS - SQS
  * AWS - DynamoDB
  * AWS - CloudWatch
-
-![Image of Resources](https://www.lucidchart.com/publicSegments/view/d8cd6d6c-9a05-49ed-8bd9-4e3635b74b87/image.png)
 
 ### Lambda
 Two functions are deployed:
