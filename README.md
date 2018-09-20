@@ -25,8 +25,8 @@ The application is fully based on Lambda functions, and is automatically deploye
 
 ### Lambda
 Two functions are deployed:
- * FindWorkspacesToReap-<orgName>
- * ProcessReaperQueue-<orgName>
+ * FindWorkspacesToReap-[orgName]
+ * ProcessReaperQueue-[orgName]
 
 #### FindWorkspacesToReap
 This process loops through the variables in the organization you have specified. It is setup to run every hour, from the time of the deployment of the Lambda function. 
@@ -42,21 +42,21 @@ This process is triggered when a message is submitted to the queue from the Find
 ## Simple Queue Service (SQS)
 
 A single queue is deployed:
- * WorkspaceReaper-<orgName>
+ * WorkspaceReaper-[orgName]
 
 This queue is setup to accept messages, and for all messages, there is a delay which keeps the message from being processed. This allows for a limited amount of calls and a variable timing of calls to be made to Terraform Enterprise, based on different factors of planning and applying of workspaces.
 
 ## DynamoDB
 
 A single table is created:
- * WorkspaceReaper-<orgName>
+ * WorkspaceReaper-[orgName]
 
 This table is utilized for storing details about the workspaces which were destroyed. There is also an item which tracks the amount of resources which have been destroyed. 
 
 ## CloudWatch
 
 A single CloudWatch event:
- * WorkspaceReaper-check_hourly-<orgName>
+ * WorkspaceReaper-check_hourly-[orgName]
 
 This event fires once an hour to kick off the Lambda function FindWorkspacesToReap
 
