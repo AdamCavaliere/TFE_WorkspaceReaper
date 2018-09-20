@@ -46,20 +46,17 @@ resource "aws_iam_role_policy" "write_policy" {
       "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
     },
           {
-         "Effect":"Allow",
-         "Action":"logs:CreateLogGroup",
-         "Resource":"arn:aws:logs:region:accountId:*"
-      },
-      {
-         "Effect":"Allow",
-         "Action":[
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-         ],
-         "Resource":[
-            "arn:aws:logs:region:accountId:log-group:[[logGroups]]:*"
-         ]
-      }
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+    ],
+      "Resource": [
+        "arn:aws:logs:*:*:*"
+    ]
+  }
   ]
 }
 EOF
@@ -108,20 +105,17 @@ resource "aws_iam_role_policy" "read_write_policy" {
       "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
     },
       {
-         "Effect":"Allow",
-         "Action":"logs:CreateLogGroup",
-         "Resource":"arn:aws:logs:region:accountId:*"
-      },
-      {
-         "Effect":"Allow",
-         "Action":[
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-         ],
-         "Resource":[
-            "arn:aws:logs:region:accountId:log-group:[[logGroups]]:*"
-         ]
-      }
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+    ],
+      "Resource": [
+        "arn:aws:logs:*:*:*"
+    ]
+  }
   ]
 }
 EOF
