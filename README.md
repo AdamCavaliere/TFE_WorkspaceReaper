@@ -18,7 +18,6 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
 # Application Details
-## Application Flow Diagram
 ![Image of Resources](https://www.lucidchart.com/publicSegments/view/d8cd6d6c-9a05-49ed-8bd9-4e3635b74b87/image.png)
 
 ## Resources Utilized

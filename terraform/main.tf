@@ -44,7 +44,22 @@ resource "aws_iam_role_policy" "write_policy" {
       ],
       "Effect": "Allow",
       "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
-    }
+    },
+          {
+         "Effect":"Allow",
+         "Action":"logs:CreateLogGroup",
+         "Resource":"arn:aws:logs:region:accountId:*"
+      },
+      {
+         "Effect":"Allow",
+         "Action":[
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+         ],
+         "Resource":[
+            "arn:aws:logs:region:accountId:log-group:[[logGroups]]:*"
+         ]
+      }
   ]
 }
 EOF
@@ -91,7 +106,22 @@ resource "aws_iam_role_policy" "read_write_policy" {
       ],
       "Effect": "Allow",
       "Resource": "${aws_dynamodb_table.base-dynamodb-table.arn}"
-    }
+    },
+      {
+         "Effect":"Allow",
+         "Action":"logs:CreateLogGroup",
+         "Resource":"arn:aws:logs:region:accountId:*"
+      },
+      {
+         "Effect":"Allow",
+         "Action":[
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+         ],
+         "Resource":[
+            "arn:aws:logs:region:accountId:log-group:[[logGroups]]:*"
+         ]
+      }
   ]
 }
 EOF
