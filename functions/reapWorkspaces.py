@@ -116,6 +116,14 @@ def UpdateItem(workspaceId, expressionAttributes):
         else:
             raise
 
+def getPolicy(runID):
+    policyURL = tfeURL + "/api/v2/runs/" + runID + "/policy-checks"
+    response = json.loads(requests.get(planURL, headers=headers).text)
+    return response
+def policyOverride(polID):
+    policyOverrideURL = tfeURL + "/api/v2/policy-checks/" + polID + "/actions/override"
+    response = requests.post(policyOverrideURL,headers=headers)
+
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
     variables = json.loads((requests.get(getVariables_URL, headers=headers)).text)
@@ -171,12 +179,31 @@ def processQueue(json_input, context):
                 'runPayload' : runPayload
             }
         )
-        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished':
+        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished' or lastStatus == 'policy_checked':
             if status == 'planning':
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 30
+                sendMessage(payload,delay)
+            if status == 'policy_checked':
+                policy = getPolicy(runID)
+                policyResult = policy['data'][0]['attributes']['result']['result']
+                permCanOverride = policy['data'][0]['permissions']['can-override']
+                actionCanOverride = policy['data'][0]['actions']['is-overridable']
+                if policyResult == True:
+                    applyRun(runID)
+                    payload = {
+                        'workspaceID':workspaceID,'status':status,'runID':runID
+                    }
+                    delay = 30
+                elif policyResult == False:
+                    if permCanOverride == True and actionCanOverride == True:
+                        policyOverride(polID)
+                        payload = {
+                        'workspaceID':workspaceID,'status':status,'runID':runID
+                        }
+                        delay = 5   
                 sendMessage(payload,delay)
             elif status == 'planned' or status == 'planned_and_finished':
                 applyRun(runID)
