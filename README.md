@@ -48,7 +48,7 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
 #### Workspace Settings
-For workspaces you wish to destroy, you must set an Environment Variable of `Workspace_TTL` with an integer that is counted in hours. This will allow the reaper bot to know how long you intend to keep the workspace around. 
+For workspaces you wish to destroy, you must set an Environment Variable of `WORKSPACE_TTL` with an integer that is counted in hours. This will allow the reaper bot to know how long you intend to keep the workspace around. 
 
 By doing a new apply to the workspace, it will reset the counter time, thus in effect extending the _"lease"_ of the workspace.
 
