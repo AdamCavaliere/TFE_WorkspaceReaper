@@ -11,6 +11,7 @@ Conceptually, a [workspace](https://www.terraform.io/docs/enterprise/workspaces/
 
 Utilizing Terraform Enterprise (TFE) allows for direct [API integration](https://www.terraform.io/docs/enterprise/api/index.html) for Terraform, which allows a much more rich experience for interacting with Terraform in an automated way. It also allows for us to take advantage of the built in logic that TFE employs, and keep our logic rather simple in terms of how to deal with destroying workspaces.
 
+### Terraform Enterprise Advantages
 This application takes advantage of a few different features that TFE provides by default.
  * Checks to see if TFE has the workspace locked.
  * Utilizes the logic of different states the workspace can be in.
@@ -18,6 +19,14 @@ This application takes advantage of a few different features that TFE provides b
  * Utilizes the tracking TFE does in terms of plans and applies.
  * Scans through the workspace variables to find workspaces that have the variable set, and utilizes the value to make a determination of what to do next.
  * Utilizes the role based access control with tokens to scope what workspaces are even exposed to this reaper bot.
+
+### Enterprise Implications
+
+This capability now allows teams to test out their infrastructure without worrying about leaving dangling infrastructure around, and it is as simple as setting a single variable on the workspace.
+
+To extend this even further, one could have a Sentinel policy which checks to make sure the variable is present and is set to a predefined range. This then could ensure that no development infrastructure could be left around for an indeterminent amount of time. 
+
+
 
 ## Technical Description
 This application is utilized to auto-destroy workspaces based on a TTL value being set. 
