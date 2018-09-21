@@ -1,6 +1,25 @@
 # Terraform Enterprise Workspace Reaper
 
-## Description
+## Enterprise Benefits
+
+The beauty of Infrastructure as Code with Terraform is that you can specify every piece of infrastructure you need built out. Along with that, the other benefit of Terraform is that you can then destroy all of that infrastructure once you are done with it as well. Some other solutions out there revolve around writing code to destroy individual instances of servers, and potentially other parts of the infrastructure that are deployed, but they don't always catch everything that is deployed. That is where the Workspace Reaper comes into play. It will destroy everything that is configured under a Terraform Workspace. All you have to do is define a variable "WORKSPACE_TTL".
+
+Here is the logic: 
+![Decision Tree for Destruction](https://www.lucidchart.com/publicSegments/view/91c993b7-4bb4-4ed7-aa28-82a18feeebb3/image.png)
+
+Conceptually, a workspace can be considered a set of infrastructure, tracked by a Terraform state file, which also has many attributes associated with it. Some of these include: secure variables, VCS configurations and even role based access control. So not only do we get a secure environment for our variables, but also a secure location that manages the locking of the state as well.
+
+Utilizing Terraform Enterprise (TFE) allows for direct API integration for Terraform, which allows a much more rich experience for interacting with Terraform in an automated way. It also allows for us to take advantage of the built in logic that TFE employs, and keep our logic rather simple in terms of how to deal with destroying workspaces.
+
+This application takes advantage of a few different features that TFE provides by default.
+ * Checks to see if TFE has the workspace locked.
+ * Utilizes the logic of different states the workspace can be in.
+ * Makes decisions if a workspace was either applied recently or destroyed.
+ * Utilizes the tracking TFE does in terms of plans and applies.
+ * Scans through the workspace variables to find workspaces that have the variable set, and utilizes the value to make a determination of what to do next.
+ * Utilizes the role based access control with tokens to scope what workspaces are even exposed to this reaper bot.
+
+## Technical Description
 This application is utilized to auto-destroy workspaces based on a TTL value being set. 
 
 The application is fully based on Lambda functions, and is automatically deployed via Terraform. 
