@@ -24,6 +24,8 @@ This application is utilized to auto-destroy workspaces based on a TTL value bei
 
 The application is fully based on Lambda functions, and is automatically deployed via Terraform. 
 
+
+
 ## Setup
 
 ### Configure your TFE Workspace
@@ -36,8 +38,18 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_ORG` - The organization your workspaces are configured under
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
+#### Workspace Settings
+For workspaces you wish to destroy, you must set the `Workspace_TTL` with an integer that is counted in hours. This will allow the reaper bot to know how long you intend to keep the workspace around. 
+
+By doing a new apply to the workspace, it will reset the counter time, thus in effect extending the _"lease"_ of the workspace.
+
+
 # Application Details
-![Image of Resources](https://www.lucidchart.com/publicSegments/view/d8cd6d6c-9a05-49ed-8bd9-4e3635b74b87/image.png)
+## Resource Links
+![Image of Resources](https://www.lucidchart.com/publicSegments/view/2275fe76-e2c3-42ec-a737-7de8faea2c31/image.png)
+
+## Decsion Flow
+![Decision Flow](https://www.lucidchart.com/publicSegments/view/e5721952-cac3-43d4-9dc1-e9eb5b2410fe/image.png)
 
 ## Resources Utilized
  * AWS - Lambda
