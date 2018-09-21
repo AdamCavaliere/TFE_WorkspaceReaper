@@ -7,9 +7,9 @@ The beauty of Infrastructure as Code with Terraform is that you can specify ever
 Here is the logic: 
 ![Decision Tree for Destruction](https://www.lucidchart.com/publicSegments/view/91c993b7-4bb4-4ed7-aa28-82a18feeebb3/image.png)
 
-Conceptually, a workspace can be considered a set of infrastructure, tracked by a Terraform state file, which also has many attributes associated with it. Some of these include: secure variables, VCS configurations and even role based access control. So not only do we get a secure environment for our variables, but also a secure location that manages the locking of the state as well.
+Conceptually, a [workspace](https://www.terraform.io/docs/enterprise/workspaces/index.html) can be considered a set of infrastructure, tracked by a Terraform state file, which also has many attributes associated with it. Some of these include: [secure variables](https://www.terraform.io/docs/enterprise/workspaces/variables.html), [VCS configurations](https://www.terraform.io/docs/enterprise/vcs/index.html) and even [role based access control](https://www.terraform.io/docs/enterprise/users-teams-organizations/index.html). So not only do we get a secure environment for our variables, but also a secure location that manages the locking of the state as well.
 
-Utilizing Terraform Enterprise (TFE) allows for direct API integration for Terraform, which allows a much more rich experience for interacting with Terraform in an automated way. It also allows for us to take advantage of the built in logic that TFE employs, and keep our logic rather simple in terms of how to deal with destroying workspaces.
+Utilizing Terraform Enterprise (TFE) allows for direct [API integration](https://www.terraform.io/docs/enterprise/api/index.html) for Terraform, which allows a much more rich experience for interacting with Terraform in an automated way. It also allows for us to take advantage of the built in logic that TFE employs, and keep our logic rather simple in terms of how to deal with destroying workspaces.
 
 This application takes advantage of a few different features that TFE provides by default.
  * Checks to see if TFE has the workspace locked.
