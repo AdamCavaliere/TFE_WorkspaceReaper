@@ -57,7 +57,7 @@ By doing a new apply to the workspace, it will reset the counter time, thus in e
 ## Resource Links
 ![Image of Resources](https://www.lucidchart.com/publicSegments/view/2275fe76-e2c3-42ec-a737-7de8faea2c31/image.png)
 
-## Decsion Flow
+## Decision Flow
 ![Decision Flow](https://www.lucidchart.com/publicSegments/view/e5721952-cac3-43d4-9dc1-e9eb5b2410fe/image.png)
 
 ## Resources Utilized
