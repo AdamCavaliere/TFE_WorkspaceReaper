@@ -183,8 +183,8 @@ def processQueue(json_input, context):
                 'runPayload' : runPayload
             }
         )
-        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished':
-            if status == 'planning':
+        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'applying':
+            if status == 'planning' or status == 'applying':
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
