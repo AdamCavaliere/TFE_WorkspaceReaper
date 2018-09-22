@@ -190,8 +190,8 @@ def processQueue(json_input, context):
                 policy = getPolicy(runID)
                 print(policy)
                 policyResult = policy['data'][0]['attributes']['result']['result']
-                permCanOverride = policy['data'][0]['permissions']['can-override']
-                actionCanOverride = policy['data'][0]['actions']['is-overridable']
+                permCanOverride = policy['data'][0]['attributes']['permissions']['can-override']
+                actionCanOverride = policy['data'][0]['attributes']['actions']['is-overridable']
                 if policyResult == True:
                     applyRun(runID)
                     payload = {
