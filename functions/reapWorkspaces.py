@@ -118,7 +118,7 @@ def UpdateItem(workspaceId, expressionAttributes):
 
 def getPolicy(runID):
     policyURL = tfeURL + "/api/v2/runs/" + runID + "/policy-checks"
-    response = json.loads(requests.get(planURL, headers=headers).text)
+    response = json.loads(requests.get(policyURL, headers=headers).text)
     return response
 def policyOverride(polID):
     policyOverrideURL = tfeURL + "/api/v2/policy-checks/" + polID + "/actions/override"
