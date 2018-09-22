@@ -199,7 +199,7 @@ def processQueue(json_input, context):
                 }
                 delay = 5
                 sendMessage(payload,delay)
-        elif lastStatus == 'policy_checked' or 'policy_override':
+        elif lastStatus == 'policy_checked' or lastStatus == 'policy_override':
             if status == 'policy_checked':
                 policy = getPolicy(runID)
                 print(policy)
