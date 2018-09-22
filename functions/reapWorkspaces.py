@@ -200,6 +200,7 @@ def processQueue(json_input, context):
                 delay = 5
                 sendMessage(payload,delay)
         elif lastStatus == 'policy_checked' or lastStatus == 'policy_override':
+            print("This is the status: " + status)
             if status == 'policy_checked':
                 policy = getPolicy(runID)
                 print(policy)
@@ -221,6 +222,7 @@ def processQueue(json_input, context):
                         delay = 5   
                 sendMessage(payload,delay)
             elif status == 'policy_override':
+                print("Applying Run")
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
