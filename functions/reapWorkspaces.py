@@ -233,6 +233,12 @@ def processQueue(json_input, context):
                 }
                 delay = 30
                 sendMessage(payload,delay)
+            elif status == 'applying':
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 30
+                sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             planDetails = getPlanStatus(runPayload['relationships']['plan']['data']['id'])
             planStatus = planDetails['data']['attributes']['status']
