@@ -179,13 +179,27 @@ def processQueue(json_input, context):
                 'runPayload' : runPayload
             }
         )
-        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished' or lastStatus == 'policy_checked':
+        if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'planned_and_finished':
             if status == 'planning':
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
                 delay = 30
                 sendMessage(payload,delay)
+            elif status == 'planned' or status == 'planned_and_finished':
+                applyRun(runID)
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 15
+                sendMessage(payload,delay)
+            else:
+                payload = {
+                    'workspaceID':workspaceID,'status':status,'runID':runID
+                }
+                delay = 5
+                sendMessage(payload,delay)
+        elif lastStatus == 'policy_checked' or 'policy_override':
             if status == 'policy_checked':
                 policy = getPolicy(runID)
                 print(policy)
@@ -206,18 +220,12 @@ def processQueue(json_input, context):
                         }
                         delay = 5   
                 sendMessage(payload,delay)
-            elif status == 'planned' or status == 'planned_and_finished':
+            elif status == 'policy_override':
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
                 }
-                delay = 15
-                sendMessage(payload,delay)
-            else:
-                payload = {
-                    'workspaceID':workspaceID,'status':status,'runID':runID
-                }
-                delay = 5
+                delay = 30
                 sendMessage(payload,delay)
         elif lastStatus == "applied" or lastStatus == "discarded":
             planDetails = getPlanStatus(runPayload['relationships']['plan']['data']['id'])
