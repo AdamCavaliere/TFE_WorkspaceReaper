@@ -188,6 +188,7 @@ def processQueue(json_input, context):
                 sendMessage(payload,delay)
             if status == 'policy_checked':
                 policy = getPolicy(runID)
+                print(policy)
                 policyResult = policy['data'][0]['attributes']['result']['result']
                 permCanOverride = policy['data'][0]['permissions']['can-override']
                 actionCanOverride = policy['data'][0]['actions']['is-overridable']
