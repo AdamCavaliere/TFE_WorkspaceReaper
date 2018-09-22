@@ -174,6 +174,7 @@ def processQueue(json_input, context):
         lastStatus = body['status']
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
+        print("This is the status: " + status)
         table.put_item(
             Item={
                 'workspaceId' : workspaceID,
@@ -203,10 +204,9 @@ def processQueue(json_input, context):
                 delay = 5
                 sendMessage(payload,delay)
         elif lastStatus == 'policy_checked' or lastStatus == 'policy_override':
-            print("This is the status: " + status)
             if status == 'policy_override':
+                print("Policy Override - Overridding")
                 policy = getPolicy(runID)
-                print(policy)
                 policyResult = policy['data'][0]['attributes']['result']['result']
                 permCanOverride = policy['data'][0]['attributes']['permissions']['can-override']
                 actionCanOverride = policy['data'][0]['attributes']['actions']['is-overridable']
@@ -226,7 +226,7 @@ def processQueue(json_input, context):
                         delay = 5   
                 sendMessage(payload,delay)
             elif status == 'policy_checked':
-                print("Applying Run")
+                print("Policy Checked - Applying Run")
                 applyRun(runID)
                 payload = {
                     'workspaceID':workspaceID,'status':status,'runID':runID
