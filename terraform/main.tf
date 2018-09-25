@@ -54,7 +54,7 @@ resource "aws_cloudwatch_event_rule" "hourly_run" {
 }
 
 resource "aws_cloudwatch_event_target" "daily_running_report" {
-  rule      = "${aws_cloudwatch_event_rule.hourly_runs.name}"
+  rule      = "${aws_cloudwatch_event_rule.hourly_run.name}"
   target_id = "${aws_lambda_function.reaper_lambda.function_name}"
   arn       = "${aws_lambda_function.reaper_lambda.arn}"
 }
@@ -64,5 +64,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_instance_usage" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.reaper_lambda.function_name}"
   principal     = "events.amazonaws.com"
-  source_arn    = "${aws_cloudwatch_event_rule.hourly_runs.arn}"
+  source_arn    = "${aws_cloudwatch_event_rule.hourly_run.arn}"
 }
