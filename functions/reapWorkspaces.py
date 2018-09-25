@@ -181,7 +181,7 @@ def processQueue(json_input, context):
                         },
                         UpdateExpression="SET lastStatus = :l, status = :s",
                         ProjectionExpression= "#s",
-                        ExpressionAttributeNames={'#s,'status'},
+                        ExpressionAttributeNames={'#s','status'},
                         ExpressionAttributeValues={
                             ':l': {'S':lastStatus},
                             ':s': {'S':status}
