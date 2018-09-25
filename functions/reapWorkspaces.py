@@ -175,14 +175,17 @@ def processQueue(json_input, context):
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
         print("This is the status: " + status)
-        table.put_item(
-            Item={
-                'workspaceId' : workspaceID,
-                'status' : status,
-                'lastStatus' : lastStatus,
-                'runPayload' : runPayload
-            }
-        )
+        response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, status = :s",
+                        ExpressionAttributeValues={
+                            ':l': {'S':lastStatus},
+                            ':s': {'S':status}
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
         if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'applying':
             if status == 'planning' or status == 'applying':
                 payload = {
@@ -266,14 +269,17 @@ def processQueue(json_input, context):
                     else:
                         raise
         elif lastStatus == "errored":
-            table.put_item(
-                Item={
-                    'workspaceId' : workspaceID,
-                    'status' : 'errored',
-                    'lastStatus' : lastStatus,
-                    'runPayload' : runPayload
-                }
-            )
+        response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, status = :s",
+                        ExpressionAttributeValues={
+                            ':l': {'S':lastStatus},
+                            ':s': {'S':'errored'}
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
 
         #Delete the message as it has been processed
         response = sqs.delete_message(
