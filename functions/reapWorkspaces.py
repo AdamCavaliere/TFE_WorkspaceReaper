@@ -269,7 +269,7 @@ def processQueue(json_input, context):
                     else:
                         raise
         elif lastStatus == "errored":
-        response = table.update_item(
+            response = table.update_item(
                         Key={
                             'workspaceId': workspaceID
                         },
