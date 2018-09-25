@@ -47,7 +47,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   function_name    = "${aws_lambda_function.process_lambda.arn}"
 }
 
-resource "aws_cloudwatch_event_rule" "hourly_runs" {
+resource "aws_cloudwatch_event_rule" "hourly_run" {
   name                = "TFE_WSR-${var.TFE_ORG}"
   description         = "Check for workspaces to reap hourly"
   schedule_expression = "rate(1 hour)"
