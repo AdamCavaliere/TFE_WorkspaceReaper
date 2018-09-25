@@ -152,7 +152,7 @@ def findReapableWorkspaces(json_input, context):
                         table.put_item(
                             Item={
                                 'workspaceId' : workspaceID,
-                                'status' : 'beginning',
+                                'current_status' : 'beginning',
                                 'lastStatus' : 'first',
                                 'runPayload' : runDetails,
                                 'variablePayload' : variable,
@@ -179,9 +179,7 @@ def processQueue(json_input, context):
                         Key={
                             'workspaceId': workspaceID
                         },
-                        UpdateExpression="SET lastStatus = :l, status = :s",
-                        ProjectionExpression= "#s",
-                        ExpressionAttributeNames={'#s':'status'},
+                        UpdateExpression="SET lastStatus = :l, current_status = :s",
                         ExpressionAttributeValues={
                             ':l': {'S':lastStatus},
                             ':s': {'S':status}
