@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "visual_results" {
   acl    = "public-read"
 
   policy = <<EOF
-  {
+{
   "Version":"2012-10-17",
   "Statement":[
     {

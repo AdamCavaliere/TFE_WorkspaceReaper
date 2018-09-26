@@ -1,6 +1,7 @@
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
+import json
 
 
 
@@ -27,10 +28,10 @@ def getWorkspaces():
 def pullDetails():
     destructions = getSavings()
     workspaces = getWorkspaces()
-    all = workspaces + destructions
-    print(all)
-    return jsonify(all)
+    details = {
+        'destroyedWorkspaces': int(destructions),
+        'workspaceDetails': workspaces
+    }
+    return json.dumps(details)
 
-print(pullDetails())
 
-app.run(host="0.0.0.0")
