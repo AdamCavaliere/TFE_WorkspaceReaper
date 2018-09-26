@@ -75,15 +75,15 @@
 							<tr>
 							  <th class="tg-0lax">Workspace</th>
 							  <th class="tg-0lax">Destruction Count</th>
-							  <th class="tg-0lax">Last Start</th>
-							  <th class="tg-0lax">Last End</th>
+							  <th class="tg-0lax">Last Start Time</th>
+							  <th class="tg-0lax">Last End Time</th>
 							  <th class="tg-0lax">Last Time</th>
 							</tr>
 							{% for workspace in workspaces %}
 							<tr>
 							  <td class="tg-0lax">{{ workspace.workspaceName }}</td>
 							  <td class="tg-0lax">1</td>
-							  <td class="tg-0lax">2</td>
+							  <td class="tg-0lax">{{ workspace.complete.attributes.status-timestamps.applied-at}}</td>
 							  <td class="tg-0lax">1</td>
 							  <td class="tg-0lax">2</td>
 							</tr>

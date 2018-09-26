@@ -51,7 +51,14 @@ def runStatus(workspaceID,runID):
 def grabWorkspaceDetails(URL):
     response = json.loads((requests.get(tfeURL + URL,headers=headers)).text)
     return(response)
-
+def compareTime(startTime,EndTime):
+    fmt = '%Y-%m-%dT%H:%M:%S.%z'
+    tstamp1 = datetime.strptime(startTime,fmt)
+    tstamp2 = datetime.strptime(EndTime,fmt)
+    timeDiff = tstamp2-tstamp1
+    seconds = timeDiff.total_seconds()
+    m, s = divmod(seconds, 60)
+    return (m + " minutes," + s + " seconds")
 
 #Kicks off the Plan to Destroy a workspace.
 def destroyWorkspace(workspaceID):
@@ -247,16 +254,21 @@ def processQueue(json_input, context):
             planDetails = getPlanStatus(runPayload['relationships']['plan']['data']['id'])
             planStatus = planDetails['data']['attributes']['status']
             resourceDestructions = planDetails['data']['attributes']['resource-destructions']
+            stopTime = runPayload['attributes']['status-timestamps']['applied-at']
+            startTime = runPayload['attributes']['status-timestamps']['started-at']
+            length = compareTime(startTime,stopTime)
             if planStatus == "finished":
                 response = table.update_item(
                         Key={
                             'workspaceId': workspaceID
                         },
-                        UpdateExpression="SET lastStatus = :l, current_status = :s, complete = :pay",
+                        UpdateExpression="SET lastStatus = :l, runTime = :runt, current_status = :s, complete = :comp, runStarted = :start",
                         ExpressionAttributeValues={
                             ':l': lastStatus,
                             ':s': status,
-                            ':pay': runPayload
+                            ':comp': stopTime,
+                            ':start': startTime,
+                            ':runt':length
                         },
                         ReturnValues="UPDATED_NEW"
                     )
