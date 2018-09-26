@@ -1,8 +1,14 @@
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
-from flask import Flask, render_template
+import awsgi
+from flask import (
+    Flask,
+    jsonify
+)
 app = Flask(__name__)
+
+
 
 org = os.environ["TFE_ORG"]
 dyn = boto3.resource('dynamodb')
@@ -28,4 +34,5 @@ def resourcesDestroyed():
     return render_template('index.html', destructions=getSavings(), workspaces=getWorkspaces()
     )
 
-app.run(host='0.0.0.0', port=8080, debug=True)
+def lambda_handler(event,context):
+    return awsgi.response(app,event,context)
