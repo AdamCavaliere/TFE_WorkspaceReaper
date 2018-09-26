@@ -255,20 +255,21 @@ def processQueue(json_input, context):
             planStatus = planDetails['data']['attributes']['status']
             resourceDestructions = planDetails['data']['attributes']['resource-destructions']
             stopTime = runPayload['attributes']['status-timestamps']['applied-at']
-            startTime = runPayload['attributes']['status-timestamps']['started-at']
+            startTime = runPayload['attributes']['status-timestamps']['planning-at']
             length = compareTime(startTime,stopTime)
             if planStatus == "finished":
                 response = table.update_item(
                         Key={
                             'workspaceId': workspaceID
                         },
-                        UpdateExpression="SET lastStatus = :l, runTime = :runt, current_status = :s, complete = :comp, runStarted = :start",
+                        UpdateExpression="SET lastStatus = :l, runTime = :runt, current_status = :s, complete = :comp, runStarted = :start, destruction_count = :des_count",
                         ExpressionAttributeValues={
                             ':l': lastStatus,
                             ':s': status,
                             ':comp': stopTime,
                             ':start': startTime,
-                            ':runt':length
+                            ':runt':length,
+                            ':des_count':resourceDestructions
                         },
                         ReturnValues="UPDATED_NEW"
                     )
