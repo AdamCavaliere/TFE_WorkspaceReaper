@@ -19,6 +19,7 @@
 			<link rel="stylesheet" href="{{ url_for('static',filename='css/skel.css') }}" />
 			<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
 			<link rel="stylesheet" href="{{ url_for('static',filename='css/style-xlarge.css') }}" />
+			<link rel="stylesheet" href="{{ url_for('static',filename='css/table.css') }}" />
 		</noscript>
 		<!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('static',filename='css/ie/v9.css') }}" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('static',filename='css/ie/v8.css') }}" /><![endif]-->
@@ -68,20 +69,37 @@
 			<section id="one" class="wrapper style1">
 				<div class="container">
 					<header class="major">
-						<h2>Lorem ipsum dolor</h2>
-						<p>Ipsum dolor tempus commodo turpis adipiscing adipiscing in tempor placerat<br />
-						sed amet accumsan enim lorem sem turpis ut. Massa amet erat accumsan curae<br />
-						blandit porttitor faucibus in nisl nisi volutpat massa mi non nascetur.</p>
+						<h2>Workspace Details</h2>
+						<p>
+						<table class="tg">
+							<tr>
+							  <th class="tg-0lax">Workspace</th>
+							  <th class="tg-0lax">Destruction Count</th>
+							  <th class="tg-0lax">Last Start</th>
+							  <th class="tg-0lax">Last End</th>
+							  <th class="tg-0lax">Last Time</th>
+							</tr>
+							{% for workspace in workspaces %}
+							<tr>
+							  <td class="tg-0lax">{{ workspace.workspaceName }}</td>
+							  <td class="tg-0lax">1</td>
+							  <td class="tg-0lax">2</td>
+							  <td class="tg-0lax">1</td>
+							  <td class="tg-0lax">2</td>
+							</tr>
+							{% endfor %}
+						  </table>
+						</p>
 					</header>
 					<div class="slider">
 						<span class="nav-previous"></span>
 						<div class="viewer">
 							<div class="reel">
 								<div class="slide">
-									<img src="{{ url_for('static',filename='images/slide01.jpg') }}" alt="" />
+									Testing
 								</div>
 								<div class="slide">
-									<img src="{{ url_for('static',filename='images/slide02.jpg') }}" alt="" />
+									One Two
 								</div>
 								<div class="slide">
 									<img src="{{ url_for('static',filename='images/slide03.jpg') }}" alt="" />

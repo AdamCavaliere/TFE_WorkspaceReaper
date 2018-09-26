@@ -17,16 +17,15 @@ def getSavings():
     destructions = savings['Item']['destructions']
     return destructions
 
-workspaces = table.scan(
-    FilterExpression=Attr('workspaceId').contains('ws-')
-)
-
-
-print(workspaces)
+def getWorkspaces():
+    workspaces = table.scan(
+        FilterExpression=Attr('workspaceId').contains('ws-')
+    )
+    return workspaces['Items']
 
 @app.route('/')
 def resourcesDestroyed():
-    return render_template('index.html', destructions=getSavings()
+    return render_template('index.html', destructions=getSavings(), workspaces=getWorkspaces()
     )
 
 app.run(host='0.0.0.0', port=8080, debug=True)
