@@ -25,7 +25,7 @@ def getWorkspaces():
     )
     return workspaces['Items']
 
-def pullDetails():
+def pullDetails(json_input, context):
     destructions = getSavings()
     workspaces = getWorkspaces()
     details = {
