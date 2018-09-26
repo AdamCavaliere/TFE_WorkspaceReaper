@@ -152,8 +152,9 @@ def findReapableWorkspaces(json_input, context):
                         table.put_item(
                             Item={
                                 'workspaceId' : workspaceID,
-                                'current_ status' : 'beginning',
+                                'current_status' : 'beginning',
                                 'lastStatus' : 'first',
+                                'runStarted' : runDetails['data']['attributes']['created-at']
                                 'runPayload' : runDetails,
                                 'variablePayload' : variable,
                                 'workspaceName' : wsDetails['data']['attributes']['name']
@@ -247,6 +248,18 @@ def processQueue(json_input, context):
             planStatus = planDetails['data']['attributes']['status']
             resourceDestructions = planDetails['data']['attributes']['resource-destructions']
             if planStatus == "finished":
+                response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, current_status = :s, complete = :pay",
+                        ExpressionAttributeValues={
+                            ':l': lastStatus,
+                            ':s': status,
+                            ':pay': runPayload
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
                 try:
                     response = table.update_item(
                         Key={
