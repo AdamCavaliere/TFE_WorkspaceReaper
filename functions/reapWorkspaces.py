@@ -52,7 +52,7 @@ def grabWorkspaceDetails(URL):
     response = json.loads((requests.get(tfeURL + URL,headers=headers)).text)
     return(response)
 def compareTime(startTime,EndTime):
-    fmt = '%Y-%m-%dT%H:%M:%S.%z'
+    fmt = '%Y-%m-%dT%H:%M:%S+%z'
     tstamp1 = datetime.strptime(startTime,fmt)
     tstamp2 = datetime.strptime(EndTime,fmt)
     timeDiff = tstamp2-tstamp1
