@@ -154,7 +154,7 @@ def findReapableWorkspaces(json_input, context):
                                 'workspaceId' : workspaceID,
                                 'current_status' : 'beginning',
                                 'lastStatus' : 'first',
-                                'runStarted' : runDetails['data']['attributes']['created-at']
+                                'runStarted' : runDetails['data']['attributes']['created-at'],
                                 'runPayload' : runDetails,
                                 'variablePayload' : variable,
                                 'workspaceName' : wsDetails['data']['attributes']['name']
