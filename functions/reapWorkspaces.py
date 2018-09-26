@@ -58,7 +58,7 @@ def compareTime(startTime,EndTime):
     timeDiff = tstamp2-tstamp1
     seconds = timeDiff.total_seconds()
     m, s = divmod(seconds, 60)
-    return (m + " minutes," + s + " seconds")
+    return (str(m) + " minutes," + str(s) + " seconds")
 
 #Kicks off the Plan to Destroy a workspace.
 def destroyWorkspace(workspaceID):
