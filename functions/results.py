@@ -1,10 +1,10 @@
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
-import awsgi
 from flask import (
     Flask,
-    jsonify
+    jsonify,
+    render_template
 )
 app = Flask(__name__)
 
@@ -36,3 +36,5 @@ def resourcesDestroyed():
 
 def lambda_handler(event,context):
     return awsgi.response(app,event,context)
+
+app.run(host="0.0.0.0")

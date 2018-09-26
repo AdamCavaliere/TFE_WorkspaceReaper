@@ -4,7 +4,6 @@ import json
 from datetime import datetime, timedelta
 import time
 import boto3
-import logging
 import decimal
 from botocore.exceptions import ClientError
 
