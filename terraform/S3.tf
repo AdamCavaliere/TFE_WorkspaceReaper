@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "visual_results" {
       "Effect":"Allow",
       "Principal": "*",
       "Action":["s3:GetObject"],
-      "Resource":["arn:aws:s3:::examplebucket/*"]
+      "Resource":["${aws_s3_bucket.visual_results.arn}/*"]
     }
   ]
 }
