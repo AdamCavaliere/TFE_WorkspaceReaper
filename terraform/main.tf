@@ -50,7 +50,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
 resource "aws_cloudwatch_event_rule" "hourly_run" {
   name                = "TFE_WSR-${var.TFE_ORG}"
   description         = "Check for workspaces to reap hourly"
-  schedule_expression = "rate(1 hour)"
+  schedule_expression = "rate(5 minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_running_report" {
