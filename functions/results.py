@@ -1,12 +1,7 @@
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
-from flask import (
-    Flask,
-    jsonify,
-    render_template
-)
-app = Flask(__name__)
+
 
 
 
@@ -29,12 +24,13 @@ def getWorkspaces():
     )
     return workspaces['Items']
 
-@app.route('/')
-def resourcesDestroyed():
-    return render_template('index.html', destructions=getSavings(), workspaces=getWorkspaces()
-    )
+def pullDetails():
+    destructions = getSavings()
+    workspaces = getWorkspaces()
+    all = workspaces + destructions
+    print(all)
+    return jsonify(all)
 
-def lambda_handler(event,context):
-    return awsgi.response(app,event,context)
+print(pullDetails())
 
 app.run(host="0.0.0.0")

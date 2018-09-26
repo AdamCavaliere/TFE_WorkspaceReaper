@@ -40,6 +40,22 @@ resource "aws_lambda_function" "process_lambda" {
   }
 }
 
+resource "aws_lambda_function" "reaper_ui" {
+  filename         = "../functions/reaperui.zip"
+  function_name    = "ReaperUIData-${var.TFE_ORG}"
+  role             = "${aws_iam_role.iam_for_lambda.arn}"
+  handler          = "results.pullDetails"
+  source_code_hash = "${base64sha256(file("../functions/reaperui.zip"))}"
+  runtime          = "python3.6"
+  timeout          = 30
+
+  environment {
+    variables = {
+      TFE_ORG = "${var.TFE_ORG}"
+    }
+  }
+}
+
 resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   batch_size       = 5
   event_source_arn = "${aws_sqs_queue.reaper_queue.arn}"
