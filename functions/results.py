@@ -32,9 +32,7 @@ def pullDetails(json_input, context):
         'isBase64Encoded': False,
         'statusCode': 200,
         'headers': {'type':'application/json'},
-        'body': {
-        'destroyedWorkspaces': "woot",
-        'workspaceDetails': "offer"}
+        'body': "{\"blah\":\"wah\"}"
     }
     return details
 
