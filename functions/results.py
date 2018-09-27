@@ -33,7 +33,9 @@ def pullDetails(json_input, context):
         'statusCode': 200,
         'headers': {'type':'application/json'},
         'body': {
-        'destroyedWorkspaces': int(destructions),
-        'workspaceDetails': workspaces}
+        'destroyedWorkspaces': "woot",
+        'workspaceDetails': "offer"}
     }
     return details
+
+print(pullDetails("blah","blah"))
