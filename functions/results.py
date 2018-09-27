@@ -32,6 +32,4 @@ def pullDetails(json_input, context):
         'destroyedWorkspaces': int(destructions),
         'workspaceDetails': workspaces
     }
-    return json.dumps(details)
-
-
+    return details
