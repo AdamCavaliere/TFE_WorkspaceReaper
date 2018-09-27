@@ -29,9 +29,9 @@ def pullDetails(json_input, context):
     destructions = getSavings()
     workspaces = getWorkspaces()
     details = {
-        'isBase64Encoded': False
+        'isBase64Encoded': False,
         'statusCode': 200,
-        'headers': {'type':'application/json'}
+        'headers': {'type':'application/json'},
         'body': {
         'destroyedWorkspaces': int(destructions),
         'workspaceDetails': workspaces}
