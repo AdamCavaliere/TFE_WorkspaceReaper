@@ -41,9 +41,9 @@ def pullDetails(json_input, context):
         'isBase64Encoded': False,
         'statusCode': 200,
         'headers': {'type':'application/json'},
-        'body': {'destructions': int(destructions), 'workspaces': workspaces}
+        'body': json.dumps('destructions': int(destructions), 'workspaces': workspaces},cls=DecimalEncoder)
     }
-    return json.dumps(details,cls=DecimalEncoder)
+    return details
 
     
 
