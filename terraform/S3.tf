@@ -29,7 +29,7 @@ EOF
 
 locals {
   files    = ["index.html", "css/style.css"]
-  root_dir = "../static/"
+  root_dir = "functions/static/"
 }
 
 resource "aws_s3_bucket_object" "object" {
