@@ -26,3 +26,16 @@ resource "aws_s3_bucket_policy" "getitall" {
 }
 EOF
 }
+
+locals {
+  files    = ["index.html", "css/style.css"]
+  root_dir = "../static/"
+}
+
+resource "aws_s3_bucket_object" "object" {
+  count  = "${length(local.files)}"
+  bucket = "${aws_s3_bucket.visual_results.id}"
+  key    = "${local.files[count.index]}"
+  source = "${local.root_dir}${local.files[count.index]}"
+  etag   = "${local.root_dir}${local.files[count.index]}"
+}
