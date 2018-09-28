@@ -2,7 +2,7 @@ import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
 import json
-
+import decimal
 
 
 
@@ -25,6 +25,15 @@ def getWorkspaces():
     )
     return workspaces['Items']
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            if abs(o) % 1 > 0:
+                return float(o)
+            else:
+                return int(o)
+        return super(DecimalEncoder, self).default(o)
+
 def pullDetails(json_input, context):
     destructions = getSavings()
     workspaces = getWorkspaces()
@@ -32,8 +41,10 @@ def pullDetails(json_input, context):
         'isBase64Encoded': False,
         'statusCode': 200,
         'headers': {'type':'application/json'},
-        'body': "{\"blah\":\"wah\"}"
+        'body': {'destructions': int(destructions), 'workspaces': workspaces}
     }
-    return details
+    return json.dumps(details,cls=DecimalEncoder)
 
-print(pullDetails("blah","blah"))
+    
+
+#print(json.dumps(pullDetails("blah","blah"),cls=DecimalEncoder))
