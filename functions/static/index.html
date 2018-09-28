@@ -6,23 +6,29 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
-		<!--[if lte IE 8]><script src="{{ url_for('static',filename='css/ie/html5shiv.js') }}"></script><![endif]-->
-		<script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/jquery.dropotron.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/jquery.scrollgress.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/jquery.scrolly.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/jquery.slidertron.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/skel.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/skel-layers.min.js') }}"></script>
-		<script src="{{ url_for('static',filename='js/init.js') }}"></script>
+		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.dropotron.min.js"></script>
+		<script src="js/jquery.scrollgress.min.js"></script>
+		<script src="js/jquery.scrolly.min.js"></script>
+		<script src="js/jquery.slidertron.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
 		<noscript>
-			<link rel="stylesheet" href="{{ url_for('static',filename='css/skel.css') }}" />
-			<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
-			<link rel="stylesheet" href="{{ url_for('static',filename='css/style-xlarge.css') }}" />
-			<link rel="stylesheet" href="{{ url_for('static',filename='css/table.css') }}" />
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-xlarge.css" />
+			<link rel="stylesheet" href="css/table.css" />
 		</noscript>
-		<!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('static',filename='css/ie/v9.css') }}" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('static',filename='css/ie/v8.css') }}" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+		<script>
+				var xhttp = new XMLHttpRequest();
+				xhttp.open("POST","https://f3g13bgi70.execute-api.us-east-2.amazonaws.com/Production/reaper",true);
+				xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xhttp.send();
+		</script>
 	</head>
 	<body class="landing">
 
@@ -79,7 +85,7 @@
 							  <th class="tg-0pky">Last End Time</th>
 							  <th class="tg-0pky">Length</th>
 							</tr>
-							{% for workspace in workspaces %}
+							
 							<tr>
 							  <td class="tg-fymr">{{ workspace.workspaceName }}</td>
 							  <td class="tg-0pky">{{ workspace.destruction_count }}</td>
@@ -87,7 +93,7 @@
 							  <td class="tg-0pky">{{ workspace.complete }}</td>
 							  <td class="tg-0pky">{{ workspace.runTime }}</td>
 							</tr>
-							{% endfor %}
+							
 						  </table>
 						</p>
 					</header>
@@ -98,8 +104,10 @@
 			
 		<!-- Footer -->
 			<footer id="footer">
-				
+				<p id="demo"></p>
 			</footer>
-
+			<script>
+			document.getElementById("demo").innerHTML = xhttp.responseText;
+			</script>
 	</body>
 </html>

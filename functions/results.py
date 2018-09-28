@@ -40,7 +40,7 @@ def pullDetails(json_input, context):
     details = {
         'isBase64Encoded': False,
         'statusCode': 200,
-        'headers': {'type':'application/json'},
+        'headers': {'type':'application/json', 'Access-Control-Allow-Origin': '*'},
         'body': json.dumps({'destructions': int(destructions), 'workspaces': workspaces},cls=DecimalEncoder)
     }
     return details
