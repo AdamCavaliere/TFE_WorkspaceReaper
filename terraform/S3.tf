@@ -49,7 +49,6 @@ data "template_file" "init" {
 }
 
 resource "aws_s3_bucket_object" "rendered_index" {
-  count  = "${length(local.files)}"
   bucket = "${aws_s3_bucket.visual_results.id}"
   key    = "index2.html"
   source = "${data.template_file.init.rendered}"
