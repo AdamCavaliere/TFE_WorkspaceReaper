@@ -39,3 +39,18 @@ resource "aws_s3_bucket_object" "object" {
   source = "${local.root_dir}${local.files[count.index]}"
   etag   = "${local.root_dir}${local.files[count.index]}"
 }
+
+data "template_file" "init" {
+  template = "${file("../functions/static/index.tpl")}"
+
+  vars {
+    rest_endpoint = "${aws_api_gateway_deployment.example.invoke_url}"
+  }
+}
+
+resource "aws_s3_bucket_object" "rendered_index" {
+  count  = "${length(local.files)}"
+  bucket = "${aws_s3_bucket.visual_results.id}"
+  key    = "index2.html"
+  source = "${data.template_file.init.rendered}"
+}
