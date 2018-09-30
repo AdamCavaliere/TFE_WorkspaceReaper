@@ -2,7 +2,7 @@
 
 ## Enterprise Benefits
 
-The beauty of Infrastructure as Code with Terraform is that you can specify every piece of infrastructure you need built out. Along with that, the other benefit of Terraform is that you can then destroy all of that infrastructure once you are done with it as well. Some other solutions out there revolve around writing code to destroy individual instances of servers, and potentially other parts of the infrastructure that are deployed, but they don't always catch everything that is deployed. That is where the Workspace Reaper comes into play. It will destroy everything that is configured under a Terraform Workspace. All you have to do is define a variable "WORKSPACE_TTL".
+The beauty of Infrastructure as Code with Terraform is that you can specify every piece of infrastructure you need built out. Along with that, the other benefit of Terraform is that you can then destroy all of that infrastructure once you are done with it. Some other solutions out there revolve around writing code to destroy individual instances of servers, and potentially other parts of the infrastructure that are deployed, but they don't always catch everything that is deployed. That is where the Workspace Reaper comes into play. It will destroy everything that is configured under a Terraform Workspace. All you have to do is define a variable "WORKSPACE_TTL".
 
 Here is the logic: 
 ![Decision Tree for Destruction](https://www.lucidchart.com/publicSegments/view/91c993b7-4bb4-4ed7-aa28-82a18feeebb3/image.png)
@@ -24,7 +24,7 @@ This application takes advantage of a few different features that TFE provides b
 
 This capability now allows teams to test out their infrastructure without worrying about leaving dangling infrastructure around, and it is as simple as setting a single variable on the workspace.
 
-To extend this even further, one could have a Sentinel policy which checks to make sure the variable is present and is set to a predefined range. This then could ensure that no development infrastructure could be left around for an indeterminent amount of time. 
+To extend this even further, one could have a Sentinel policy which checks to make sure the variable is present and is set to a predefined range. This then could ensure that no development infrastructure could be left around for an indeterminate amount of time. 
 
 
 
