@@ -53,7 +53,7 @@ data "template_file" "init" {
   template = "${file("../functions/static/index.tpl")}"
 
   vars {
-    rest_endpoint = "${aws_api_gateway_deployment.example.invoke_url}"
+    rest_endpoint = "${aws_api_gateway_deployment.example.invoke_url}/${aws_api_gateway_resource.proxy.path_part}"
   }
 }
 
