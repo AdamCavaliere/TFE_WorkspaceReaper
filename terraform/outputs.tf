@@ -1,3 +1,3 @@
 output "webui" {
-  value = "${aws_s3_bucket_object.rendered_index.website_endpoint}"
+  value = "${aws_s3_bucket.visual_results.website_endpoint}"
 }
