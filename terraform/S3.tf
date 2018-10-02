@@ -41,13 +41,12 @@ locals {
 }
 
 resource "aws_s3_bucket_object" "object" {
-  count            = "${length(local.files)}"
-  bucket           = "${aws_s3_bucket.visual_results.id}"
-  key              = "${local.files[count.index]}"
-  source           = "${local.root_dir}${local.files[count.index]}"
-  etag             = "${local.root_dir}${local.files[count.index]}"
-  local.tempLookup = "${split(".",local.files[count.index])}"
-  content_type     = "${lookup(contentType,local.tempLookup[1],"text/html")}"
+  count        = "${length(local.files)}"
+  bucket       = "${aws_s3_bucket.visual_results.id}"
+  key          = "${local.files[count.index]}"
+  source       = "${local.root_dir}${local.files[count.index]}"
+  etag         = "${local.root_dir}${local.files[count.index]}"
+  content_type = "${lookup(local.contentType,element(split(".",local.files[count.index]),1),"text/html")}"
 }
 
 data "template_file" "init" {
