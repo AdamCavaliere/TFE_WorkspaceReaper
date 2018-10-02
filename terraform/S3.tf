@@ -28,16 +28,26 @@ EOF
 }
 
 locals {
-  files    = ["index.html", "css/style-large.css", "css/style-small.css", "css/style-medium.css", "css/style-xlarge.css", "css/style-xsmall.css", "css/style.css", "css/font-awesome.min.css", "css/skel.css", "css/images/overlay.png", "css/ie/html5shiv.js", "css/ie/v9.css", "css/ie/v8.css", "css/ie/PIE.htc", "css/ie/backgroundsize.min.htc", "images/banner.jpg", "js/jquery.scrollgress.min.js", "js/jquery.scrolly.min.js", "js/jquery.dropotron.min.js", "js/jquery.min.js", "js/init.js", "js/skel.min.js", "js/skel-layers.min.js", "js/jquery.slidertron.min.js", "fonts/fontawesome-webfont.svg", "fonts/FontAwesome.otf", "fonts/fontawesome-webfont.ttf", "fonts/fontawesome-webfont.woff", "fonts/fontawesome-webfont.eot", "sass/style-xlarge.scss", "sass/_vars.scss", "sass/style-xsmall.scss", "sass/style.scss", "sass/style-medium.scss", "sass/_mixins.scss", "sass/style-large.scss", "sass/style-small.scss", "sass/ie/v8.scss", "sass/ie/v9.scss"]
-  root_dir = "../functions/static/"
+  files      = ["index.html", "css/style-large.css", "css/style-small.css", "css/style-medium.css", "css/style-xlarge.css", "css/style-xsmall.css", "css/style.css", "css/font-awesome.min.css", "css/skel.css", "css/images/overlay.png", "css/ie/html5shiv.js", "css/ie/v9.css", "css/ie/v8.css", "css/ie/PIE.htc", "css/ie/backgroundsize.min.htc", "images/banner.jpg", "js/jquery.scrollgress.min.js", "js/jquery.scrolly.min.js", "js/jquery.dropotron.min.js", "js/jquery.min.js", "js/init.js", "js/skel.min.js", "js/skel-layers.min.js", "js/jquery.slidertron.min.js", "fonts/fontawesome-webfont.svg", "fonts/FontAwesome.otf", "fonts/fontawesome-webfont.ttf", "fonts/fontawesome-webfont.woff", "fonts/fontawesome-webfont.eot", "sass/style-xlarge.scss", "sass/_vars.scss", "sass/style-xsmall.scss", "sass/style.scss", "sass/style-medium.scss", "sass/_mixins.scss", "sass/style-large.scss", "sass/style-small.scss", "sass/ie/v8.scss", "sass/ie/v9.scss"]
+  root_dir   = "../functions/static/"
+  tempLookup = ""
+
+  contentType = {
+    "html" = "text/html"
+    "css"  = "text/css"
+    "js"   = "application/javascript"
+    "png"  = "image/png"
+  }
 }
 
 resource "aws_s3_bucket_object" "object" {
-  count  = "${length(local.files)}"
-  bucket = "${aws_s3_bucket.visual_results.id}"
-  key    = "${local.files[count.index]}"
-  source = "${local.root_dir}${local.files[count.index]}"
-  etag   = "${local.root_dir}${local.files[count.index]}"
+  count            = "${length(local.files)}"
+  bucket           = "${aws_s3_bucket.visual_results.id}"
+  key              = "${local.files[count.index]}"
+  source           = "${local.root_dir}${local.files[count.index]}"
+  etag             = "${local.root_dir}${local.files[count.index]}"
+  local.tempLookup = "${split(".",local.files[count.index])}"
+  content_type     = "${lookup(contentType,local.tempLookup[1],"text/html")}"
 }
 
 data "template_file" "init" {
@@ -49,7 +59,8 @@ data "template_file" "init" {
 }
 
 resource "aws_s3_bucket_object" "rendered_index" {
-  bucket = "${aws_s3_bucket.visual_results.id}"
-  key    = "index2.html"
-  source = "${data.template_file.init.rendered}"
+  bucket       = "${aws_s3_bucket.visual_results.id}"
+  key          = "index2.html"
+  source       = "${data.template_file.init.rendered}"
+  content_type = "text/html"
 }
