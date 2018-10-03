@@ -14,3 +14,8 @@ variable "ui" {
   description = "Setting true or false to create UI for reporting reaper workspace"
   default     = false
 }
+
+variable "check_time" {
+  description = "How often the workspaces should be queried for destruction"
+  default     = 5
+}

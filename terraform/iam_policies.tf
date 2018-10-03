@@ -77,7 +77,7 @@ resource "aws_iam_role" "iam_for_lambda_ui" {
 EOF
 }
 
-resource "aws_iam_role_policy" "read_write_policy" {
+resource "aws_iam_role_policy" "reaperui_policy" {
   name = "iam_reaperui_policy-${var.TFE_ORG}"
   role = "${aws_iam_role.iam_for_lambda_ui.id}"
 
