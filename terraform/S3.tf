@@ -42,8 +42,7 @@ locals {
 }
 
 resource "aws_s3_bucket_object" "object" {
-  count        = "${var.ui == true ? 1 : 0}"
-  count        = "${length(local.files)}"
+  count        = "${var.ui == true ? length(local.files) : 0}"
   bucket       = "${aws_s3_bucket.visual_results.id}"
   key          = "${local.files[count.index]}"
   source       = "${local.root_dir}${local.files[count.index]}"
