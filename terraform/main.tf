@@ -41,6 +41,7 @@ resource "aws_lambda_function" "process_lambda" {
 }
 
 resource "aws_lambda_function" "reaper_ui" {
+  count            = "${var.ui == true ? 1 : 0}"
   filename         = "../functions/reaperui.zip"
   function_name    = "ReaperUIData-${var.TFE_ORG}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
