@@ -47,8 +47,12 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_ORG` - The organization your workspaces are configured under
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
+ #### Optional Variable
+ * `ui` - true or false: Enables a web-ui to report on how many total destructions have occurred and details about the workspaces which were destroyed. This defaults to `false`. The WebURL will be exposed as an output if it is set.
+ * `check_time` - How often (in minutes) the reaper bot should run to check on workspaces. The default is set to `5`.
+
 #### Workspace Settings
-For workspaces you wish to destroy, you must set an Environment Variable of `WORKSPACE_TTL` with an integer that is counted in hours. This will allow the reaper bot to know how long you intend to keep the workspace around. 
+For workspaces you wish to destroy, you must set an Environment Variable of `WORKSPACE_TTL` with an integer that is counted in minutes. This will allow the reaper bot to know how long you intend to keep the workspace around. 
 
 By doing a new apply to the workspace, it will reset the counter time, thus in effect extending the _"lease"_ of the workspace.
 
@@ -74,9 +78,9 @@ Two functions are deployed:
  Both functions are in the same Python file (reapWorkspaces.py)
 
 #### FindWorkspacesToReap
-This process loops through the variables in the organization you have specified. It is setup to run every hour, from the time of the deployment of the Lambda function. 
+This process loops through the variables in the organization you have specified. It is setup to run every 5 minutes, from the time of the deployment of the Lambda function, unless the optional variable is changed. 
 
-It looks for a specific Key name of `Workspace_TTL`, and an integer value specifying an amount of hours to keep the workspace around. 
+It looks for a specific Key name of `Workspace_TTL`, and an integer value specifying an amount of minutes to keep the workspace around. 
 
 For any workspace, which the variable is found in, the process then evaluates whether or not the last run was an apply or destroy. If it was an apply, it then compares the last execution time to the TTL. If the time exceeds the TTL, a message is submitted to the SQS Queue for further processing.
 
@@ -101,7 +105,7 @@ This table is utilized for storing details about the workspaces which were destr
 ## CloudWatch
 
 A single CloudWatch event:
- * WorkspaceReaper-check_hourly-[orgName]
+ * WorkspaceReaper-event_run-[orgName]
 
-This event fires once an hour to kick off the Lambda function FindWorkspacesToReap
+This event fires every 5 minutes to kick off the Lambda function FindWorkspacesToReap
 

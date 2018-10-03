@@ -4,7 +4,6 @@ import json
 from datetime import datetime, timedelta
 import time
 import boto3
-import logging
 import decimal
 from botocore.exceptions import ClientError
 
@@ -51,7 +50,14 @@ def runStatus(workspaceID,runID):
 def grabWorkspaceDetails(URL):
     response = json.loads((requests.get(tfeURL + URL,headers=headers)).text)
     return(response)
-
+def compareTime(startTime,EndTime):
+    fmt = '%Y-%m-%dT%H:%M:%S'
+    tstamp1 = datetime.strptime(startTime[:19],fmt)
+    tstamp2 = datetime.strptime(EndTime[:19],fmt)
+    timeDiff = tstamp2-tstamp1
+    seconds = timeDiff.total_seconds()
+    m, s = divmod(seconds, 60)
+    return (str(int(m)) + " minutes," + str(int(s)) + " seconds")
 
 #Kicks off the Plan to Destroy a workspace.
 def destroyWorkspace(workspaceID):
@@ -119,7 +125,6 @@ def UpdateItem(workspaceId, expressionAttributes):
 def getPolicy(runID):
     policyURL = tfeURL + "/api/v2/runs/" + runID + "/policy-checks"
     response = json.loads(requests.get(policyURL, headers=headers).text)
-    print(response)
     return response
 def policyOverride(polID):
     policyOverrideURL = tfeURL + "/api/v2/policy-checks/" + polID + "/actions/override"
@@ -152,8 +157,9 @@ def findReapableWorkspaces(json_input, context):
                         table.put_item(
                             Item={
                                 'workspaceId' : workspaceID,
-                                'status' : 'beginning',
+                                'current_status' : 'beginning',
                                 'lastStatus' : 'first',
+                                'runStarted' : runDetails['data']['attributes']['created-at'],
                                 'runPayload' : runDetails,
                                 'variablePayload' : variable,
                                 'workspaceName' : wsDetails['data']['attributes']['name']
@@ -175,14 +181,17 @@ def processQueue(json_input, context):
         runPayload = runStatus(workspaceID,runID)
         status = runPayload['attributes']['status']
         print("This is the status: " + status)
-        table.put_item(
-            Item={
-                'workspaceId' : workspaceID,
-                'status' : status,
-                'lastStatus' : lastStatus,
-                'runPayload' : runPayload
-            }
-        )
+        response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, current_status = :s",
+                        ExpressionAttributeValues={
+                            ':l': lastStatus,
+                            ':s': status
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
         if lastStatus == 'planning' or lastStatus == 'planned' or lastStatus == 'applying':
             if status == 'planning' or status == 'applying':
                 payload = {
@@ -243,7 +252,25 @@ def processQueue(json_input, context):
             planDetails = getPlanStatus(runPayload['relationships']['plan']['data']['id'])
             planStatus = planDetails['data']['attributes']['status']
             resourceDestructions = planDetails['data']['attributes']['resource-destructions']
+            stopTime = runPayload['attributes']['status-timestamps']['applied-at']
+            startTime = runPayload['attributes']['status-timestamps']['planning-at']
+            length = compareTime(startTime,stopTime)
             if planStatus == "finished":
+                response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, runTime = :runt, current_status = :s, complete = :comp, runStarted = :start, destruction_count = :des_count",
+                        ExpressionAttributeValues={
+                            ':l': lastStatus,
+                            ':s': status,
+                            ':comp': stopTime,
+                            ':start': startTime,
+                            ':runt':length,
+                            ':des_count':resourceDestructions
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
                 try:
                     response = table.update_item(
                         Key={
@@ -266,14 +293,17 @@ def processQueue(json_input, context):
                     else:
                         raise
         elif lastStatus == "errored":
-            table.put_item(
-                Item={
-                    'workspaceId' : workspaceID,
-                    'status' : 'errored',
-                    'lastStatus' : lastStatus,
-                    'runPayload' : runPayload
-                }
-            )
+            response = table.update_item(
+                        Key={
+                            'workspaceId': workspaceID
+                        },
+                        UpdateExpression="SET lastStatus = :l, status = :s",
+                        ExpressionAttributeValues={
+                            ':l': lastStatus,
+                            ':s': 'errored'
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
 
         #Delete the message as it has been processed
         response = sqs.delete_message(
