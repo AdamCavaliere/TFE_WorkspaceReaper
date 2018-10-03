@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "visual_results" {
   count  = "${var.ui == true ? 1 : 0}"
-  bucket = "workspacereaper-${var.TFE_ORG}.this-demo.rocks"
+  bucket = "workspacereaper-${var.TFE_ORG}"
   acl    = "public-read"
 
   website {

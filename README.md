@@ -47,6 +47,9 @@ The application is fully based on Lambda functions, and is automatically deploye
  * `TFE_ORG` - The organization your workspaces are configured under
  * `TFE_TOKEN` - Either a User Token, or a Team Token
 
+ #### Optional Variable
+ * `ui` - true or false: Enables a web-ui to report on how many total destructions have occurred and details about the workspaces which were destroyed. This defaults to `false`. The WebURL will be exposed as an output if it is set.
+
 #### Workspace Settings
 For workspaces you wish to destroy, you must set an Environment Variable of `WORKSPACE_TTL` with an integer that is counted in hours. This will allow the reaper bot to know how long you intend to keep the workspace around. 
 

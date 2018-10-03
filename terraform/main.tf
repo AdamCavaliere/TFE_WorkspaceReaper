@@ -44,7 +44,7 @@ resource "aws_lambda_function" "reaper_ui" {
   count            = "${var.ui == true ? 1 : 0}"
   filename         = "../functions/reaperui.zip"
   function_name    = "ReaperUIData-${var.TFE_ORG}"
-  role             = "${aws_iam_role.iam_for_lambda.arn}"
+  role             = "${aws_iam_role.iam_for_lambda_ui.arn}"
   handler          = "results.pullDetails"
   source_code_hash = "${base64sha256(file("../functions/reaperui.zip"))}"
   runtime          = "python3.6"
@@ -67,7 +67,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
 resource "aws_cloudwatch_event_rule" "hourly_run" {
   name                = "TFE_WSR-${var.TFE_ORG}"
   description         = "Check for workspaces to reap hourly"
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(${var.check_time} minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_running_report" {
