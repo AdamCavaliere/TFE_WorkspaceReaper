@@ -29,7 +29,7 @@ def findRuns(workspaceID):
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
     for run in runPayload['data']:
-        if 'applied-at' in run:
+        if 'applied-at' in run['attributes']['status-timestamps']:
             print(runURL)
             if run['attributes']['status'] == "applied":
                 if run['attributes']['is-destroy'] == True:
