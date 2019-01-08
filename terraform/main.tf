@@ -1,3 +1,9 @@
+data "archive_file" "reaper" {
+  type        = "zip"
+  source_dir  = "${path.module}/functions/"
+  output_path = "${path.module}/files/reaper.zip"
+}
+
 provider "aws" {
   region = "us-east-2"
 }

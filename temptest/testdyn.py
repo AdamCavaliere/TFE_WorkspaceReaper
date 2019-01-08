@@ -31,12 +31,3 @@ except ClientError as e:
         )
     else:
         raise
-else:
-    print("UpdateItem succeeded:")
-    print(response['destructions'])
-    #print(json.dumps(response, indent=4, cls=DecimalEncoder))
-
-#print("UpdateItem succeeded:")
-#print(json.dumps(response, indent=4, cls=DecimalEncoder))
-
-

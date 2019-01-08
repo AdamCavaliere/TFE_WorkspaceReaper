@@ -1,0 +1,9 @@
+import "tfplan"
+
+#TTL Variable Set
+workspace = rule { "WORKSPACE_TTL" in tfplan.variables }
+
+# Environment can't last more than 1 week
+max_runtime = rule { int(tfplan.variables.WORKSPACE_TTL) < 10080 }
+
+main = rule { (workspace and max_runtime) else true }

@@ -139,32 +139,33 @@ def findReapableWorkspaces(json_input, context):
         if variable['attributes']['key'] == "WORKSPACE_TTL":
             workspaceURL = variable['relationships']['configurable']['links']['related']
             workspaceID = variable['relationships']['configurable']['data']['id']
+            wsDetails = grabWorkspaceDetails(workspaceURL)
             runTime = findRuns(workspaceID)
-            if runTime != "Destroyed":
-                runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
-                destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
-                if datetime.now() > destroyTime:
-                    wsDetails = grabWorkspaceDetails(workspaceURL)
-                    if wsDetails['data']['attributes']['locked'] == False:
-                        print("Lets Do this")
-                        runDetails = destroyWorkspace(workspaceID)
-                        runID = runDetails['data']['id']
-                        payload = {
-                            'workspaceID':workspaceID,'status':"planning",'runID':runID
-                        }
-                        delay = 5
-                        sendMessage(payload,delay)
-                        table.put_item(
-                            Item={
-                                'workspaceId' : workspaceID,
-                                'current_status' : 'beginning',
-                                'lastStatus' : 'first',
-                                'runStarted' : runDetails['data']['attributes']['created-at'],
-                                'runPayload' : runDetails,
-                                'variablePayload' : variable,
-                                'workspaceName' : wsDetails['data']['attributes']['name']
+            if org.lower() == (wsDetails['data']['relationships']['organization']['data']['id']).lower():
+                if runTime != "Destroyed":
+                    runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
+                    destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
+                    if datetime.now() > destroyTime:
+                        if wsDetails['data']['attributes']['locked'] == False:
+                            print("Lets Do this")
+                            runDetails = destroyWorkspace(workspaceID)
+                            runID = runDetails['data']['id']
+                            payload = {
+                                'workspaceID':workspaceID,'status':"planning",'runID':runID
                             }
-                        )
+                            delay = 5
+                            sendMessage(payload,delay)
+                            table.put_item(
+                                Item={
+                                    'workspaceId' : workspaceID,
+                                    'current_status' : 'beginning',
+                                    'lastStatus' : 'first',
+                                    'runStarted' : runDetails['data']['attributes']['created-at'],
+                                    'runPayload' : runDetails,
+                                    'variablePayload' : variable,
+                                    'workspaceName' : wsDetails['data']['attributes']['name']
+                                }
+                            )
     return {"status":"Success"}
 
 
