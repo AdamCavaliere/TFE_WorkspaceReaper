@@ -28,7 +28,7 @@ getWorkspaces_URL = tfeURL + "/api/v2/organizations/" + org + "/workspaces"
 def findRuns(workspaceID):
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
-    print(runPayload)
+    print(runURL)
     for run in runPayload['data']:
         if run['attributes']['status'] == "applied":
             if run['attributes']['is-destroy'] == True:
