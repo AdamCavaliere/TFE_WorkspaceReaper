@@ -1,7 +1,7 @@
 data "archive_file" "reaper" {
   type        = "zip"
   source_dir  = "../functions/"
-  output_path = "../functions/reaper.zip"
+  output_path = "../functions/reaper2.zip"
 }
 
 provider "aws" {
@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 resource "aws_lambda_function" "reaper_lambda" {
-  filename         = "../functions/reaper.zip"
+  filename         = "../functions/reaper2.zip"
   function_name    = "FindWorkspacesToReap-${var.TFE_ORG}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
   source_code_hash = "${data.archive_file.reaper.output_base64sha256}"
@@ -31,7 +31,7 @@ resource "aws_lambda_function" "reaper_lambda" {
 }
 
 resource "aws_lambda_function" "process_lambda" {
-  filename         = "../functions/reaper.zip"
+  filename         = "../functions/reaper2.zip"
   function_name    = "ProcessReaperQueue-${var.TFE_ORG}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
   source_code_hash = "${data.archive_file.reaper.output_base64sha256}"
