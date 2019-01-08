@@ -25,6 +25,8 @@ resource "aws_lambda_function" "reaper_lambda" {
       SQS_QUEUE = "${aws_sqs_queue.reaper_queue.id}"
     }
   }
+
+  depends_on = ["data.archive_file.reaper.output_base64sha256"]
 }
 
 resource "aws_lambda_function" "process_lambda" {
