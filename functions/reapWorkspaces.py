@@ -28,6 +28,7 @@ getWorkspaces_URL = tfeURL + "/api/v2/organizations/" + org + "/workspaces"
 def findRuns(workspaceID):
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
+    print(runPayload)
     for run in runPayload['data']:
         if run['attributes']['status'] == "applied":
             if run['attributes']['is-destroy'] == True:
@@ -35,8 +36,7 @@ def findRuns(workspaceID):
                 break
             else:
                 lastGoodApply = run['attributes']['status-timestamps']['applied-at']
-                break
-    
+                break    
     return lastGoodApply
 
 #Get the current run status - requires the workspaceID, and the runID to pull this.
