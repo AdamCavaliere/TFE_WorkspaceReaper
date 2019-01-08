@@ -26,7 +26,7 @@ resource "aws_lambda_function" "reaper_lambda" {
     }
   }
 
-  depends_on = ["data.archive_file.reaper.output_base64sha256"]
+  depends_on = ["data.archive_file.reaper"]
 }
 
 resource "aws_lambda_function" "process_lambda" {
