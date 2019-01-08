@@ -30,13 +30,16 @@ def findRuns(workspaceID):
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
     print(runURL)
     for run in runPayload['data']:
-        if run['attributes']['status'] == "applied":
-            if run['attributes']['is-destroy'] == True:
-                lastGoodApply = "Destroyed"
-                break
-            else:
-                lastGoodApply = run['attributes']['status-timestamps']['applied-at']
-                break    
+        if 'applied-at' in run:
+            if run['attributes']['status'] == "applied":
+                if run['attributes']['is-destroy'] == True:
+                    lastGoodApply = "Destroyed"
+                    break
+                else:
+                    lastGoodApply = run['attributes']['status-timestamps']['applied-at']
+                    break
+        else:
+            lastGoodApply = False
     return lastGoodApply
 
 #Get the current run status - requires the workspaceID, and the runID to pull this.
@@ -141,31 +144,32 @@ def findReapableWorkspaces(json_input, context):
             workspaceID = variable['relationships']['configurable']['data']['id']
             wsDetails = grabWorkspaceDetails(workspaceURL)
             runTime = findRuns(workspaceID)
-            if org.lower() == (wsDetails['data']['relationships']['organization']['data']['id']).lower():
-                if runTime != "Destroyed":
-                    runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
-                    destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
-                    if datetime.now() > destroyTime:
-                        if wsDetails['data']['attributes']['locked'] == False:
-                            print("Lets Do this")
-                            runDetails = destroyWorkspace(workspaceID)
-                            runID = runDetails['data']['id']
-                            payload = {
-                                'workspaceID':workspaceID,'status':"planning",'runID':runID
-                            }
-                            delay = 5
-                            sendMessage(payload,delay)
-                            table.put_item(
-                                Item={
-                                    'workspaceId' : workspaceID,
-                                    'current_status' : 'beginning',
-                                    'lastStatus' : 'first',
-                                    'runStarted' : runDetails['data']['attributes']['created-at'],
-                                    'runPayload' : runDetails,
-                                    'variablePayload' : variable,
-                                    'workspaceName' : wsDetails['data']['attributes']['name']
+            if runTime:
+                if org.lower() == (wsDetails['data']['relationships']['organization']['data']['id']).lower():
+                    if runTime != "Destroyed":
+                        runTimeConverted = datetime.strptime(runTime, "%Y-%m-%dT%H:%M:%S+00:00")
+                        destroyTime = runTimeConverted + timedelta(minutes=int(variable['attributes']['value']))
+                        if datetime.now() > destroyTime:
+                            if wsDetails['data']['attributes']['locked'] == False:
+                                print("Lets Do this")
+                                runDetails = destroyWorkspace(workspaceID)
+                                runID = runDetails['data']['id']
+                                payload = {
+                                    'workspaceID':workspaceID,'status':"planning",'runID':runID
                                 }
-                            )
+                                delay = 5
+                                sendMessage(payload,delay)
+                                table.put_item(
+                                    Item={
+                                        'workspaceId' : workspaceID,
+                                        'current_status' : 'beginning',
+                                        'lastStatus' : 'first',
+                                        'runStarted' : runDetails['data']['attributes']['created-at'],
+                                        'runPayload' : runDetails,
+                                        'variablePayload' : variable,
+                                        'workspaceName' : wsDetails['data']['attributes']['name']
+                                    }
+                                )
     return {"status":"Success"}
 
 
