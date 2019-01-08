@@ -9,13 +9,13 @@ provider "aws" {
 }
 
 resource "aws_lambda_function" "reaper_lambda" {
-  filename         = "${path.module}/functions/reaper.zip"
-  function_name    = "FindWorkspacesToReap-${var.TFE_ORG}"
-  role             = "${aws_iam_role.iam_for_lambda.arn}"
-  handler          = "reapWorkspaces.findReapableWorkspaces"
-  source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
-  runtime          = "python3.6"
-  timeout          = 30
+  filename      = "${path.module}/functions/reaper.zip"
+  function_name = "FindWorkspacesToReap-${var.TFE_ORG}"
+  role          = "${aws_iam_role.iam_for_lambda.arn}"
+  handler       = "reapWorkspaces.findReapableWorkspaces"
+
+  runtime = "python3.6"
+  timeout = 30
 
   environment {
     variables = {
@@ -30,13 +30,13 @@ resource "aws_lambda_function" "reaper_lambda" {
 }
 
 resource "aws_lambda_function" "process_lambda" {
-  filename         = "${path.module}/functions/reaper.zip"
-  function_name    = "ProcessReaperQueue-${var.TFE_ORG}"
-  role             = "${aws_iam_role.iam_for_lambda.arn}"
-  handler          = "reapWorkspaces.processQueue"
-  source_code_hash = "${base64sha256(file("../functions/reaper.zip"))}"
-  runtime          = "python3.6"
-  timeout          = 30
+  filename      = "${path.module}/functions/reaper.zip"
+  function_name = "ProcessReaperQueue-${var.TFE_ORG}"
+  role          = "${aws_iam_role.iam_for_lambda.arn}"
+  handler       = "reapWorkspaces.processQueue"
+
+  runtime = "python3.6"
+  timeout = 30
 
   environment {
     variables = {
