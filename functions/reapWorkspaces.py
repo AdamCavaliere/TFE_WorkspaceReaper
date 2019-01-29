@@ -139,6 +139,8 @@ def policyOverride(polID):
 def findReapableWorkspaces(json_input, context):
     getVariables_URL = tfeURL + "/api/v2/vars"
     variables = json.loads((requests.get(getVariables_URL, headers=headers)).text)
+    print("Here are the variables")
+    print(variables)
     for variable in variables['data']:
         if variable['attributes']['key'] == "WORKSPACE_TTL":
             workspaceURL = variable['relationships']['configurable']['links']['related']
