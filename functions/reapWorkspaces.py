@@ -26,6 +26,7 @@ getWorkspaces_URL = tfeURL + "/api/v2/organizations/" + org + "/workspaces"
 
 #Looking to find the last good run which was applied, not destroyed
 def findRuns(workspaceID):
+    lastGoodApply = ""
     runURL = tfeURL + "/api/v2/workspaces/" + workspaceID + "/runs?status=applied"
     runPayload = json.loads((requests.get(runURL, headers=headers)).text)
     for run in runPayload['data']:
